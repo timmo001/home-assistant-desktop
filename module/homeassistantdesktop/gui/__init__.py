@@ -1,6 +1,7 @@
 """Home Assistant Desktop: GUI"""
 import sys
 from threading import Event, Thread
+from typing import Optional
 
 from PySide6 import QtWidgets
 from qt_material import apply_stylesheet
@@ -41,11 +42,12 @@ class GUI(Base):
     ):
         """Initialize"""
         super().__init__()
-        self._application = None
-        self._settings = settings
-        self._stopping = False
+        self._application: Optional[QtWidgets.QApplication] = None
+        self._settings: Settings = settings
+        self._stopping: bool = False
+        self._thread: Optional[StoppableThread] = None
 
-        self.gui_settings = None
+        self.gui_settings: Optional[GUISettings] = None
 
     def _setup(self):
         """Setup"""
