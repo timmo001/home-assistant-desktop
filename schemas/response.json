@@ -7,11 +7,30 @@
       "type": "string",
       "description": "Message ID"
     },
-    "data": {
-      "type": "object",
-      "description": "Data"
+    "type": {
+      "type": "string",
+      "description": "Type"
+    },
+    "success": {
+      "type": "boolean",
+      "description": "Success"
+    },
+    "message": {
+      "type": "string",
+      "description": "Message"
+    },
+    "event_type": {
+      "type": "string",
+      "description": "Event Type"
+    },
+    "result": {
+      "description": "Result"
+    },
+    "ha_version": {
+      "type": "string",
+      "description": "Home Assistant Version"
     }
   },
-  "required": ["id"],
+  "required": ["type"],
   "additionalProperties": {}
 }

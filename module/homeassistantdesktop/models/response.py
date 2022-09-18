@@ -16,5 +16,10 @@ class Response(BaseModel):
     class Config:
         extra = Extra.allow
 
-    id: str = Field(..., description="Message ID")
-    data: Optional[dict[str, Any]] = Field(None, description="Data")
+    id: Optional[str] = Field(None, description="Message ID")
+    type: str = Field(..., description="Type")
+    success: Optional[bool] = Field(None, description="Success")
+    message: Optional[str] = Field(None, description="Message")
+    event_type: Optional[str] = Field(None, description="Event Type")
+    result: Optional[Any] = Field(None, description="Result")
+    ha_version: Optional[str] = Field(None, description="Home Assistant Version")

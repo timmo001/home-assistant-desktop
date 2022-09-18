@@ -37,7 +37,7 @@ class Database(Base):
         """Initialise"""
         super().__init__()
         self._engine = create_engine(
-            f"sqlite:///{os.path.join(get_user_data_directory(), 'systembridge.db')}"
+            f"sqlite:///{os.path.join(get_user_data_directory(), 'homeassistantdesktop.db')}"
         )
         SQLModel.metadata.create_all(
             self._engine,

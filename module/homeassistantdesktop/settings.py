@@ -40,7 +40,7 @@ class Settings(Base):
         # Generate default encryption key
         self._encryption_key: str = ""
         secret_key_path = os.path.join(
-            AppDirs("systembridge", "timmo001").user_data_dir, "secret.key"
+            AppDirs("homeassistantdesktop", "timmo001").user_data_dir, "secret.key"
         )
         if exists(secret_key_path):
             with io.open(secret_key_path, encoding="utf-8") as file:

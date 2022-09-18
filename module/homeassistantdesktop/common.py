@@ -11,7 +11,7 @@ from appdirs import AppDirs
 
 def get_user_data_directory() -> str:
     """Get the user data directory"""
-    user_data_dir = AppDirs("systembridge", "timmo001").user_data_dir
+    user_data_dir = AppDirs("homeassistantdesktop", "timmo001").user_data_dir
     # Create User Data Directories
     if not os.path.exists(user_data_dir):
         os.makedirs(user_data_dir, exist_ok=True)
