@@ -62,7 +62,7 @@ class GUISettings(QtWidgets.QWidget):
         layout_log_level.addWidget(label_log_level)
         layout_log_level.addWidget(self.input_log_level)
 
-        label_home_assistant_secure = QtWidgets.QLabel("Log Level")
+        label_home_assistant_secure = QtWidgets.QLabel("Home Assistant SSL")
         label_home_assistant_secure.setFont(QtGui.QFont("Roboto Regular", 24))
         self.input_home_assistant_secure = QtWidgets.QCheckBox()
         self.input_home_assistant_secure.setCheckState(
@@ -82,7 +82,7 @@ class GUISettings(QtWidgets.QWidget):
         layout_home_assistant_host.addWidget(label_home_assistant_host)
         layout_home_assistant_host.addWidget(self.input_home_assistant_host)
 
-        label_home_assistant_port = QtWidgets.QLabel("Home Assistant Host")
+        label_home_assistant_port = QtWidgets.QLabel("Home Assistant Port")
         label_home_assistant_port.setFont(QtGui.QFont("Roboto Regular", 24))
         self.input_home_assistant_port = QtWidgets.QLineEdit()
         self.input_home_assistant_port.setText(setting_home_assistant_port)
