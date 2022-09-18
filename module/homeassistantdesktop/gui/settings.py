@@ -1,6 +1,4 @@
 """Home Assistant Desktop: GUI - Settings"""
-import random
-
 from PySide6 import QtCore, QtGui, QtWidgets
 
 from ..const import (
@@ -117,4 +115,19 @@ class GUISettings(QtWidgets.QWidget):
     @QtCore.Slot()
     def save(self):
         """Save"""
-        self.button_save.setText(str(random.randint(0, 100)))
+        self._settings.set(SETTING_AUTOSTART, str(self.input_autostart.isChecked()))
+        self._settings.set(SETTING_LOG_LEVEL, str(self.input_log_level.text()))
+        self._settings.set(
+            SETTING_HOME_ASSISTANT_SECURE,
+            str(self.input_home_assistant_secure.isChecked()),
+        )
+        self._settings.set(
+            SETTING_HOME_ASSISTANT_HOST, str(self.input_home_assistant_host.text())
+        )
+        self._settings.set(
+            SETTING_HOME_ASSISTANT_PORT, str(self.input_home_assistant_port.text())
+        )
+        self._settings.set_secret(
+            SECRET_HOME_ASSISTANT_TOKEN, str(self.input_home_assistant_token.text())
+        )
+        self.close()
