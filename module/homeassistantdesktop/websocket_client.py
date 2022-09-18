@@ -2,9 +2,9 @@
 from __future__ import annotations
 
 import asyncio
-from collections.abc import Awaitable, Callable
+from collections.abc import Callable
 import socket
-from typing import Any, Optional
+from typing import Optional
 from uuid import uuid4
 
 import aiohttp
