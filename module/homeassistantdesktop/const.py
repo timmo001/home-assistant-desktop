@@ -24,6 +24,7 @@ MESSAGE_TYPE_AUTH_INVALID = "auth_invalid"
 MESSAGE_TYPE_AUTH_OK = "auth_ok"
 MESSAGE_TYPE_AUTH_REQUIRED = "auth_required"
 MESSAGE_TYPE_GET_CONFIG = "get_config"
+MESSAGE_TYPE_GET_SERVICES = "get_services"
 MESSAGE_TYPE_RESULT = "result"
 MESSAGE_TYPE_SUCCESS = "success"
 
