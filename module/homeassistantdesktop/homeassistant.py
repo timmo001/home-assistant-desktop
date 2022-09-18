@@ -21,6 +21,7 @@ from .exceptions import (
     AuthenticationTokenMissingException,
     ConnectionErrorException,
 )
+from .models.config import Config
 from .models.response import Response
 from .settings import Settings
 from .websocket_client import WebSocketClient
@@ -38,7 +39,7 @@ class HomeAssistant(Base):
         self._settings = settings
         self._websocket_client = WebSocketClient(settings)
 
-        self.config: Optional[dict[str, Any]] = None
+        self.config: Optional[Config] = None
         self.config_id: Optional[int] = None
 
     @property
@@ -62,8 +63,8 @@ class HomeAssistant(Base):
             self._logger.debug("Received message: %s", response.json())
         elif response.type == MESSAGE_TYPE_RESULT:
             self._logger.debug("Received result: %s", response.json())
-            if response.id == self.config_id:
-                self.config = response.result
+            if response.id == self.config_id and response.result is not None:
+                self.config = Config(**response.result)
                 self._logger.info("Set config")
         else:
             self._logger.warning("Received unknown message: %s", response.json())
@@ -133,4 +134,5 @@ class HomeAssistant(Base):
         )
         self.config_id = response.id
         # self._logger.info("Received config: %s", response.json())
-        # self.config = response.result
+        # self.config = Config(**response.result)
+        # self._logger.info("Set config")

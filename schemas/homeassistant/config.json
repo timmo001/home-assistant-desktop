@@ -1,0 +1,111 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "latitude": {
+      "type": "number"
+    },
+    "longitude": {
+      "type": "number"
+    },
+    "elevation": {
+      "type": "integer"
+    },
+    "unit_system": {
+      "type": "object",
+      "properties": {
+        "length": {
+          "type": "string"
+        },
+        "accumulated_precipitation": {
+          "type": "string"
+        },
+        "mass": {
+          "type": "string"
+        },
+        "pressure": {
+          "type": "string"
+        },
+        "temperature": {
+          "type": "string"
+        },
+        "volume": {
+          "type": "string"
+        },
+        "wind_speed": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "length",
+        "accumulated_precipitation",
+        "mass",
+        "pressure",
+        "temperature",
+        "volume",
+        "wind_speed"
+      ]
+    },
+    "location_name": {
+      "type": "string"
+    },
+    "time_zone": {
+      "type": "string"
+    },
+    "components": {
+      "type": "array",
+      "items": {}
+    },
+    "config_dir": {
+      "type": "string"
+    },
+    "whitelist_external_dirs": {
+      "type": "array"
+    },
+    "allowlist_external_dirs": {
+      "type": "array"
+    },
+    "allowlist_external_urls": {
+      "type": "array"
+    },
+    "version": {
+      "type": "string"
+    },
+    "config_source": {
+      "type": "string"
+    },
+    "safe_mode": {
+      "type": "boolean"
+    },
+    "state": {
+      "type": "string"
+    },
+    "external_url": {
+      "type": "string"
+    },
+    "internal_url": {
+      "type": "string"
+    },
+    "currency": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "latitude",
+    "longitude",
+    "elevation",
+    "unit_system",
+    "location_name",
+    "time_zone",
+    "components",
+    "config_dir",
+    "whitelist_external_dirs",
+    "allowlist_external_dirs",
+    "allowlist_external_urls",
+    "version",
+    "config_source",
+    "safe_mode",
+    "state",
+    "currency"
+  ]
+}
