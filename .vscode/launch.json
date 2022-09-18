@@ -9,7 +9,7 @@
       "preLaunchTask": "Module: pip install",
       "cwd": "${workspaceFolder}/module",
       "justMyCode": false,
-      "args": ["version"]
+      "args": ["main"]
     }
   ]
 }
