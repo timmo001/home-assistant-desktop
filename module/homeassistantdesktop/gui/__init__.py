@@ -3,6 +3,7 @@ import sys
 from threading import Event, Thread
 
 from PySide6 import QtWidgets
+from qt_material import apply_stylesheet
 
 from ..base import Base
 from .settings import GUISettings
@@ -44,10 +45,14 @@ class GUI(Base):
     def _setup(self):
         """Setup"""
         self._logger.info("Setup GUI")
+
         self._application = QtWidgets.QApplication()
+        apply_stylesheet(self._application, theme="dark_cyan.xml")
+
         self.gui_settings = GUISettings()
         self.gui_settings.resize(800, 600)
         self.gui_settings.show()
+
         sys.exit(self._application.exec())
 
     def setup(self) -> None:
