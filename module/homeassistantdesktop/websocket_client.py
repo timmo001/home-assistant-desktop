@@ -38,6 +38,7 @@ class WebSocketClient(Base):
     ) -> None:
         """Initialize"""
         super().__init__()
+        self.current_id = 0
         self._settings = settings
         self._responses: dict[
             str, tuple[asyncio.Future[Response], Optional[list[str]]]
@@ -89,10 +90,15 @@ class WebSocketClient(Base):
         data: dict,
         wait_for_response: bool = True,
         response_types: Optional[list[str]] = None,
+        include_id: bool = True,
     ) -> Response:
         """Send a message to the WebSocket"""
         if not self.connected or self._websocket is None:
             raise ConnectionClosedException("Connection is closed")
+
+        if include_id:
+            self.current_id += 1
+            data[MESSAGE_ID] = self.current_id
 
         request = Request(
             id=uuid4().hex,
@@ -110,7 +116,9 @@ class WebSocketClient(Base):
                 self._responses.pop(request.id)
         return Response(
             **{
-                MESSAGE_ID: request.id,
+                MESSAGE_ID: request.data[MESSAGE_ID]
+                if request.data is not None and request.data[MESSAGE_ID] is not None
+                else request.id,
                 MESSAGE_TYPE: MESSAGE_TYPE_SUCCESS,
             }  # type: ignore
         )
@@ -141,12 +149,15 @@ class WebSocketClient(Base):
             if response.id is not None:
                 response_tuple = self._responses.get(response.type)
                 if response_tuple is not None:
-                    future, response_type = response_tuple
-                    if response_type is not None and response_type != response.type:
+                    future, response_types = response_tuple
+                    if (
+                        response_types is not None
+                        and response.type not in response_types
+                    ):
                         self._logger.info(
-                            "Response type '%s' does not match requested type '%s'.",
+                            "Response type '%s' does not match requested types: '%s'.",
                             response.type,
-                            response_type,
+                            response_types,
                         )
                     else:
                         try:
