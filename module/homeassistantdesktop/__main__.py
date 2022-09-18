@@ -16,7 +16,7 @@ from .settings import Settings
 app = typer.Typer()
 database = Database()
 settings = Settings(database)
-homeassistant = HomeAssistant(settings)
+homeassistant = HomeAssistant(database, settings)
 loop = asyncio.new_event_loop()
 
 

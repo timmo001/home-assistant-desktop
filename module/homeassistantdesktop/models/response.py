@@ -13,11 +13,11 @@ class Event(BaseModel):
     Event
     """
 
-    data: dict[str, Any] = Field(..., description="Data")
-    event_type: str = Field(..., description="Event Type")
-    time_fired: str = Field(..., description="Time Fired")
-    origin: str = Field(..., description="Origin")
-    context: dict[str, Any] = Field(..., description="Context")
+    data: Optional[dict[str, Any]] = Field(None, description="Data")
+    event_type: Optional[str] = Field(None, description="Event Type")
+    time_fired: Optional[str] = Field(None, description="Time Fired")
+    origin: Optional[str] = Field(None, description="Origin")
+    context: Optional[dict[str, Any]] = Field(None, description="Context")
 
 
 class Response(BaseModel):

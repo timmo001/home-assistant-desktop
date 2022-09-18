@@ -28,6 +28,7 @@ from .const import (
     MESSAGE_TYPE_SUCCESS,
     SECRET_HOME_ASSISTANT_TOKEN,
 )
+from .database import Database
 from .exceptions import (
     AuthenticationException,
     AuthenticationTokenMissingException,
@@ -44,10 +45,12 @@ class HomeAssistant(Base):
 
     def __init__(
         self,
+        database: Database,
         settings: Settings,
     ) -> None:
         """Initialize"""
         super().__init__()
+        self._database = database
         self._settings = settings
         self._websocket_client = WebSocketClient(settings)
 
@@ -55,8 +58,10 @@ class HomeAssistant(Base):
         self.id_config: Optional[int] = None
         self.id_services: Optional[int] = None
         self.id_states: Optional[int] = None
+        self.id_subscribed_entities: Optional[int] = None
         self.services: Optional[dict[str, dict[str, Any]]] = None
         self.states: Optional[dict[str, dict]] = None
+        self.subscribed_entities: Optional[list[str]] = None
 
     @property
     def connected(self) -> bool:
@@ -77,7 +82,12 @@ class HomeAssistant(Base):
             await self.get_config()
             await self.get_services()
             await self.get_states()
-            self.id_states = await self.subscribe_events(MESSAGE_STATE_CHANGED)
+            await self.subscribe_events(MESSAGE_STATE_CHANGED)
+            # self.subscribed_entities: list[str] = [
+            #     subscribed_entity.entity_id
+            #     for subscribed_entity in self._database.get_data(SubscribedEntities)
+            # ]
+            # self.id_states = await self.subscribe_entities(self.subscribed_entities)
         elif response.type == MESSAGE_TYPE_AUTH_INVALID:
             self._logger.error("Authentication failed: %s", response.message)
         elif response.type == MESSAGE_TYPE_SUCCESS:
@@ -91,11 +101,17 @@ class HomeAssistant(Base):
                 self.services = response.result
                 self._logger.info("Set Home Assistant services")
             elif response.id == self.id_states and response.result is not None:
-                self.states = response.result
+                if self.states is None:
+                    self.states = {}
+                for state in response.result:
+                    self.states[state["entity_id"]] = state
                 self._logger.info("Set Home Assistant states")
         elif response.type == MESSAGE_TYPE_EVENT and response.event is not None:
             self._logger.debug("Received event: %s", response.event)
-            if response.event.event_type == MESSAGE_STATE_CHANGED:
+            if (
+                response.event.event_type == MESSAGE_STATE_CHANGED
+                and response.event.data is not None
+            ):
                 entity_id = response.event.data.get("entity_id")
                 state = response.event.data.get("new_state")
                 if entity_id is not None and state is not None:
@@ -104,7 +120,8 @@ class HomeAssistant(Base):
                     self.states[entity_id] = state
                     self._logger.debug("Updated Home Assistant state: %s", entity_id)
         else:
-            self._logger.debug("Received unknown message: %s", response.json())
+            self._logger.info("Received unused/unknown message type: %s", response.type)
+            self._logger.debug("Received unused/unknown message: %s", response.json())
 
     async def authenticate(self) -> None:
         """Authenticate with Home Assistant"""
@@ -227,7 +244,7 @@ class HomeAssistant(Base):
 
     async def get_states(self) -> None:
         """Get states of all entities"""
-        self._logger.info("Getting states of all entities")
+        self._logger.info("Getting states of all entities from Home Assistant")
         # response =
         await self._websocket_client.send_message(
             data={

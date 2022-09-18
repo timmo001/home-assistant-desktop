@@ -46,8 +46,7 @@
           "type": "object",
           "description": "Context"
         }
-      },
-      "required": ["data", "event_type", "time_fired", "origin", "context"]
+      }
     },
     "result": {
       "description": "Result"
