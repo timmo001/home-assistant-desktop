@@ -1,0 +1,37 @@
+---
+name: Deploy
+
+# yamllint disable-line rule:truthy
+on:
+  release:
+    types:
+      - published
+  # schedule:
+  #   - cron: "0 2 * * *"
+  workflow_dispatch:
+
+jobs:
+  deploy-module:
+    uses: timmo001/workflows/.github/workflows/deploy-python-linux.yml@master
+    secrets:
+      PUSH_TOKEN: ${{ secrets.PUSH_TOKEN }}
+      PYPI_USERNAME: ${{ secrets.PYPI_USERNAME }}
+      PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+    with:
+      code-path: module
+      module-name: timmopytemplate
+      use-incremental: true
+  deploy-container-amd64:
+    needs:
+      - deploy-module
+    uses: timmo001/workflows/.github/workflows/deploy-container-linux.yml@master
+    with:
+      architecture: amd64
+      container-slug: python-template
+  deploy-container-aarch64:
+    needs:
+      - deploy-module
+    uses: timmo001/workflows/.github/workflows/deploy-container-linux.yml@master
+    with:
+      architecture: aarch64
+      container-slug: python-template
