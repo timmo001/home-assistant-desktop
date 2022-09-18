@@ -8,6 +8,7 @@ import async_timeout
 from .base import Base
 from .const import (
     MESSAGE_DOMAIN,
+    MESSAGE_ENTITY_IDS,
     MESSAGE_EVENT_TYPE,
     MESSAGE_SERVICE,
     MESSAGE_SERVICE_DATA,
@@ -22,6 +23,7 @@ from .const import (
     MESSAGE_TYPE_GET_SERVICES,
     MESSAGE_TYPE_GET_STATES,
     MESSAGE_TYPE_RESULT,
+    MESSAGE_TYPE_SUBSCRIBE_ENTITIES,
     MESSAGE_TYPE_SUBSCRIBE_EVENTS,
     MESSAGE_TYPE_SUCCESS,
     SECRET_HOME_ASSISTANT_TOKEN,
@@ -242,6 +244,26 @@ class HomeAssistant(Base):
         # self._logger.info("Received states: %s", response.json())
         # self.states = response.result
         # self._logger.info("Set Home Assistant states")
+
+    async def subscribe_entities(
+        self,
+        entity_ids: list[str],
+    ) -> int:
+        """Subscribe to entities"""
+        self._logger.info("Subscribing to Home Assistant entities: %s", entity_ids)
+        await self._websocket_client.send_message(
+            data={
+                MESSAGE_TYPE: MESSAGE_TYPE_SUBSCRIBE_ENTITIES,
+                MESSAGE_ENTITY_IDS: entity_ids,
+            },
+            wait_for_response=False,
+            # wait_for_response=True,
+            # response_types=[
+            #     MESSAGE_TYPE_RESULT,
+            # ],
+            include_id=True,
+        )
+        return self._websocket_client.current_id
 
     async def subscribe_events(
         self,
