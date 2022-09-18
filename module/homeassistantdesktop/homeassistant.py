@@ -120,7 +120,6 @@ class HomeAssistant(Base):
 
     async def get_config(self) -> None:
         """Get Home Assistant config"""
-        await asyncio.sleep(10)
         response = await self._websocket_client.send_message(
             data={
                 MESSAGE_TYPE: MESSAGE_TYPE_GET_CONFIG,
