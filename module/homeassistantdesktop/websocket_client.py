@@ -118,7 +118,7 @@ class WebSocketClient(Base):
             **{
                 MESSAGE_ID: request.data[MESSAGE_ID]
                 if request.data is not None and request.data.get(MESSAGE_ID) is not None
-                else message.id,
+                else request.id,
                 MESSAGE_TYPE: MESSAGE_TYPE_SUCCESS,
             }  # type: ignore
         )
