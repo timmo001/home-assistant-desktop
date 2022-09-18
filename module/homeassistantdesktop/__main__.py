@@ -55,6 +55,6 @@ if __name__ == "__main__":
     logging.getLogger("zeroconf").setLevel(logging.ERROR)
     asyncio.new_event_loop()
     homeassistant = HomeAssistant(database, settings, setup_complete)
-    logger = logging.getLogger(__name__)
+    logger = logging.getLogger(f"homeassistantdesktop.{__name__}")
 
     app()
