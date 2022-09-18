@@ -2,10 +2,10 @@
 from __future__ import annotations
 
 import asyncio
-from collections.abc import Callable
+from collections.abc import Awaitable, Callable
 import json
 import socket
-from typing import Awaitable, Optional
+from typing import Optional
 from uuid import uuid4
 
 import aiohttp
