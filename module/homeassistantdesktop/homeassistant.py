@@ -109,7 +109,6 @@ class HomeAssistant(Base):
                 for state in response.result:
                     self.states[state["entity_id"]] = state
                 self._logger.info("Set Home Assistant states")
-                await self._setup_complete()
         elif response.type == MESSAGE_TYPE_EVENT and response.event is not None:
             self._logger.debug("Received event: %s", response.event)
             if (
@@ -126,6 +125,13 @@ class HomeAssistant(Base):
         else:
             self._logger.info("Received unused/unknown message type: %s", response.type)
             self._logger.debug("Received unused/unknown message: %s", response.json())
+
+        if (
+            self.config is not None
+            and self.services is not None
+            and self.states is not None
+        ):
+            await self._setup_complete()
 
     async def authenticate(self) -> None:
         """Authenticate with Home Assistant"""
