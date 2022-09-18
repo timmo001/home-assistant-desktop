@@ -4,13 +4,19 @@ from __future__ import annotations
 import typer
 
 from ._version import __version__
+from .database import Database
+from .homeassistant import HomeAssistant
+from .settings import Settings
 
 app = typer.Typer()
+database = Database()
+settings = Settings(database)
+homeassistant = HomeAssistant(settings)
 
 
-@app.command(name="hello", short_help="Say Hello World")
-def hello_world() -> None:
-    """Say Hello World"""
+@app.command(name="main", short_help="Run main application")
+def main() -> None:
+    """Run main application"""
     typer.secho("Hello world", fg=typer.colors.GREEN)
 
 
