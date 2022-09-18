@@ -248,7 +248,7 @@ class HomeAssistant(Base):
         event_type: str,
     ) -> int:
         """Subscribe to events"""
-        self._logger.info("Subscribing to events")
+        self._logger.info("Subscribing to Home Assistant events: %s", event_type)
         await self._websocket_client.send_message(
             data={
                 MESSAGE_TYPE: MESSAGE_TYPE_SUBSCRIBE_EVENTS,
