@@ -1,6 +1,7 @@
 """Home Assistant Desktop: Home Assistant"""
 
 import asyncio
+from collections.abc import Callable, Coroutine
 from typing import Any, Optional
 
 import async_timeout
@@ -47,11 +48,13 @@ class HomeAssistant(Base):
         self,
         database: Database,
         settings: Settings,
+        setup_complete: Callable[[], Coroutine[Any, Any, None]],
     ) -> None:
         """Initialize"""
         super().__init__()
         self._database = database
         self._settings = settings
+        self._setup_complete = setup_complete
         self._websocket_client = WebSocketClient(settings)
 
         self.config: Optional[Config] = None
@@ -106,6 +109,7 @@ class HomeAssistant(Base):
                 for state in response.result:
                     self.states[state["entity_id"]] = state
                 self._logger.info("Set Home Assistant states")
+                await self._setup_complete()
         elif response.type == MESSAGE_TYPE_EVENT and response.event is not None:
             self._logger.debug("Received event: %s", response.event)
             if (

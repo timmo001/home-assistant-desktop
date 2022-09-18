@@ -16,15 +16,19 @@ from .settings import Settings
 app = typer.Typer()
 database = Database()
 settings = Settings(database)
-homeassistant = HomeAssistant(database, settings)
-loop = asyncio.new_event_loop()
 
 
 async def setup() -> None:
     """Setup"""
+    logger.info("Setup")
     await homeassistant.connect()
     await homeassistant.listen()
 
+
+async def setup_complete() -> None:
+    """Setup complete"""
+    logger.info("Setup complete")
+    if homeassistant.states is not None:
 
 @app.command(name="main", short_help="Run main application")
 def main() -> None:
@@ -43,5 +47,8 @@ if __name__ == "__main__":
     LOG_LEVEL = str(settings.get(SETTING_LOG_LEVEL))
     setup_logger(LOG_LEVEL, "homeassistantdesktop")
     logging.getLogger("zeroconf").setLevel(logging.ERROR)
+    asyncio.new_event_loop()
+    homeassistant = HomeAssistant(database, settings, setup_complete)
+    logger = logging.getLogger(__name__)
 
     app()
