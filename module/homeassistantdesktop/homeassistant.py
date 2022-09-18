@@ -65,12 +65,13 @@ class HomeAssistant(Base):
             self._logger.debug("Received result: %s", response.json())
             if response.id == self.config_id and response.result is not None:
                 self.config = Config(**response.result)
-                self._logger.info("Set config")
+                self._logger.info("Set Home Assistant config")
         else:
-            self._logger.warning("Received unknown message: %s", response.json())
+            self._logger.debug("Received unknown message: %s", response.json())
 
     async def authenticate(self) -> None:
         """Authenticate with Home Assistant"""
+        self._logger.info("Authenticating with Home Assistant")
         token = self._settings.get_secret(SECRET_HOME_ASSISTANT_TOKEN)
         if token is None:
             raise AuthenticationTokenMissingException("No token set")
@@ -96,6 +97,7 @@ class HomeAssistant(Base):
 
     async def connect(self) -> None:
         """Connect to Home Assistant"""
+        self._logger.info("Connecting to Home Assistant")
         try:
             async with async_timeout.timeout(20):
                 await self._websocket_client.connect()
@@ -112,6 +114,7 @@ class HomeAssistant(Base):
 
     async def listen(self) -> None:
         """Listen for messages from Home Assistant"""
+        self._logger.info("Listen for messages")
         try:
             await self._websocket_client.listen(self._handle_message)
         except AuthenticationException as exception:
@@ -121,7 +124,9 @@ class HomeAssistant(Base):
 
     async def get_config(self) -> None:
         """Get Home Assistant config"""
-        response = await self._websocket_client.send_message(
+        self._logger.info("Getting config from Home Assistant")
+        # response =
+        await self._websocket_client.send_message(
             data={
                 MESSAGE_TYPE: MESSAGE_TYPE_GET_CONFIG,
             },
@@ -132,7 +137,7 @@ class HomeAssistant(Base):
             # ],
             include_id=True,
         )
-        self.config_id = response.id
+        self.config_id = self._websocket_client.current_id
         # self._logger.info("Received config: %s", response.json())
         # self.config = Config(**response.result)
-        # self._logger.info("Set config")
+        # self._logger.info("Set Home Assistant config")
