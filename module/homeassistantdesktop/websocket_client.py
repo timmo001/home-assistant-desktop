@@ -114,14 +114,16 @@ class WebSocketClient(Base):
                 return await future
             finally:
                 self._responses.pop(request.id)
-        return Response(
+        response = Response(
             **{
-                MESSAGE_ID: request.data[MESSAGE_ID]
-                if request.data is not None and request.data[MESSAGE_ID] is not None
-                else request.id,
                 MESSAGE_TYPE: MESSAGE_TYPE_SUCCESS,
             }  # type: ignore
         )
+
+        if request.data is not None and request.data[MESSAGE_ID] is not None:
+            response.id = request.data[MESSAGE_ID]
+
+        return response
 
     async def listen(
         self,
