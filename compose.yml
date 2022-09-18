@@ -1,6 +1,6 @@
 ---
 services:
-  python-template:
+  home-assistant-desktop:
     build: .
     restart: unless-stopped
     ports:
@@ -9,8 +9,8 @@ services:
         protocol: tcp
     volumes:
       - type: volume
-        source: python-template-data
-        target: /data/python-template
+        source: home-assistant-desktop-data
+        target: /data/home-assistant-desktop
 
 volumes:
-  python-template-data: {}
+  home-assistant-desktop-data: {}

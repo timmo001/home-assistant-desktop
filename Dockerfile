@@ -8,21 +8,21 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 # Setup base
 ARG BUILD_ARCH=amd64
 RUN \
-    apt-get update \
-    \
-    && apt-get install -y \
-    python3 \
-    python3-pip \
-    python3-setuptools \
-    python3-wheel \
-    \
-    && pip install --upgrade \
-    timmopytemplate \
-    \
-    && rm -fr \
-    /tmp/* \
-    /var/{cache,log}/* \
-    /var/lib/apt/lists/*
+  apt-get update \
+  \
+  && apt-get install -y \
+  python3 \
+  python3-pip \
+  python3-setuptools \
+  python3-wheel \
+  \
+  && pip install --upgrade \
+  homeassistantdesktop \
+  \
+  && rm -fr \
+  /tmp/* \
+  /var/{cache,log}/* \
+  /var/lib/apt/lists/*
 
 # Copy root filesystem
 COPY rootfs /
@@ -38,15 +38,15 @@ ARG BUILD_VERSION
 
 # Labels
 LABEL \
-    maintainer="Aidan Timson <contact@timmo.xyz>" \
-    org.opencontainers.image.title="${BUILD_NAME}" \
-    org.opencontainers.image.description="${BUILD_DESCRIPTION}" \
-    org.opencontainers.image.vendor="Timmo" \
-    org.opencontainers.image.authors="Aidan Timson <contact@timmo.xyz>" \
-    org.opencontainers.image.licenses="MIT" \
-    org.opencontainers.image.url="https://python-template.timmo.dev" \
-    org.opencontainers.image.source="https://github.com/${BUILD_REPOSITORY}" \
-    org.opencontainers.image.documentation="https://github.com/${BUILD_REPOSITORY}/blob/master/README.md" \
-    org.opencontainers.image.created=${BUILD_DATE} \
-    org.opencontainers.image.revision=${BUILD_REF} \
-    org.opencontainers.image.version=${BUILD_VERSION}
+  maintainer="Aidan Timson <contact@timmo.xyz>" \
+  org.opencontainers.image.title="${BUILD_NAME}" \
+  org.opencontainers.image.description="${BUILD_DESCRIPTION}" \
+  org.opencontainers.image.vendor="Timmo" \
+  org.opencontainers.image.authors="Aidan Timson <contact@timmo.xyz>" \
+  org.opencontainers.image.licenses="MIT" \
+  org.opencontainers.image.url="https://home-assistant-desktop.timmo.dev" \
+  org.opencontainers.image.source="https://github.com/${BUILD_REPOSITORY}" \
+  org.opencontainers.image.documentation="https://github.com/${BUILD_REPOSITORY}/blob/master/README.md" \
+  org.opencontainers.image.created=${BUILD_DATE} \
+  org.opencontainers.image.revision=${BUILD_REF} \
+  org.opencontainers.image.version=${BUILD_VERSION}

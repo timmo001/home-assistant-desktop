@@ -1,11 +1,11 @@
-# Python Template
+# Home Assistant Desktop
 
-[![CodeQL](https://github.com/timmo001/python-template/actions/workflows/codeql.yml/badge.svg)](https://github.com/timmo001/python-template/actions/workflows/codeql.yml)
-[![Build](https://github.com/timmo001/python-template/actions/workflows/build.yml/badge.svg)](https://github.com/timmo001/python-template/actions/workflows/build.yml)
-[![Deploy](https://github.com/timmo001/python-template/actions/workflows/deploy.yml/badge.svg)](https://github.com/timmo001/python-template/actions/workflows/deploy.yml)
-[![Lint](https://github.com/timmo001/python-template/actions/workflows/lint.yml/badge.svg)](https://github.com/timmo001/python-template/actions/workflows/lint.yml)
+[![CodeQL](https://github.com/timmo001/home-assistant-desktop/actions/workflows/codeql.yml/badge.svg)](https://github.com/timmo001/home-assistant-desktop/actions/workflows/codeql.yml)
+[![Build](https://github.com/timmo001/home-assistant-desktop/actions/workflows/build.yml/badge.svg)](https://github.com/timmo001/home-assistant-desktop/actions/workflows/build.yml)
+[![Deploy](https://github.com/timmo001/home-assistant-desktop/actions/workflows/deploy.yml/badge.svg)](https://github.com/timmo001/home-assistant-desktop/actions/workflows/deploy.yml)
+[![Lint](https://github.com/timmo001/home-assistant-desktop/actions/workflows/lint.yml/badge.svg)](https://github.com/timmo001/home-assistant-desktop/actions/workflows/lint.yml)
 
-A python module template.
+A Python application to interact with Home Assistant.
 
 ## Support my work
 

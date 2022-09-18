@@ -1,4 +1,4 @@
-"""Python Template: Install"""
+"""Home Assistant Desktop: Install"""
 import subprocess
 import sys
 
@@ -21,7 +21,7 @@ def dev() -> None:
 
     command = [
         *command,
-        "timmopytemplate",
+        "homeassistantdesktop",
     ]
 
     print("Installing..")
@@ -44,7 +44,7 @@ def production() -> None:
 
     command = [
         *command,
-        "timmopytemplate",
+        "homeassistantdesktop",
     ]
 
     print("Installing..")

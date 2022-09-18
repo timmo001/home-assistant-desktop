@@ -1,4 +1,4 @@
-"""Python Template: Main"""
+"""Home Assistant Desktop: Main"""
 from __future__ import annotations
 
 import typer

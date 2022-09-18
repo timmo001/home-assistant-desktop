@@ -5,7 +5,7 @@
       "name": "Module",
       "type": "python",
       "request": "launch",
-      "module": "timmopytemplate",
+      "module": "homeassistantdesktop",
       "preLaunchTask": "Module: pip install",
       "cwd": "${workspaceFolder}/module",
       "justMyCode": false,

@@ -12,13 +12,13 @@ with io.open("requirements.txt", encoding="utf-8") as f:
     requirements = f.read().splitlines()
 
 setup(
-    name="timmopytemplate",
-    description="Python Template",
-    keywords="python template",
+    name="homeassistantdesktop",
+    description="Home Assistant Desktop",
+    keywords="Home Assistant Desktop",
     author="Aidan Timson (Timmo)",
     author_email="contact@timmo.xyz",
     license="MIT",
-    url="https://github.com/timmo001/python-template",
+    url="https://github.com/timmo001/home-assistant-desktop",
     packages=find_packages(exclude=["tests", "generator"]),
     install_requires=requirements,
     setup_requires=requirements_setup,
