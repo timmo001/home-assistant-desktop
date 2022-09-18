@@ -19,6 +19,7 @@ class Response(BaseModel):
     id: Optional[Any] = Field(None, description="Message ID")
     type: str = Field(..., description="Type")
     success: Optional[bool] = Field(None, description="Success")
+    error: Optional[dict[str, Any]] = Field(None, description="Error")
     message: Optional[str] = Field(None, description="Message")
     event_type: Optional[str] = Field(None, description="Event Type")
     result: Optional[Any] = Field(None, description="Result")

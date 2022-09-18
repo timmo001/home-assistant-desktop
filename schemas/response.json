@@ -14,6 +14,10 @@
       "type": "boolean",
       "description": "Success"
     },
+    "error": {
+      "type": "object",
+      "description": "Error"
+    },
     "message": {
       "type": "string",
       "description": "Message"

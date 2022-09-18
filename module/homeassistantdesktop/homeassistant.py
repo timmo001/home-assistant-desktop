@@ -55,7 +55,9 @@ class HomeAssistant(Base):
         response: Response,
     ) -> None:
         """Handle message from Home Assistant"""
-        if response.type == MESSAGE_TYPE_AUTH_REQUIRED:
+        if response.error is not None:
+            self._logger.error("Received error: %s", response.error)
+        elif response.type == MESSAGE_TYPE_AUTH_REQUIRED:
             await self.authenticate()
         elif response.type == MESSAGE_TYPE_AUTH_OK:
             self._logger.info("Authentication successful: %s", response.ha_version)

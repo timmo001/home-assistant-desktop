@@ -17,6 +17,7 @@ COLUMN_VALUE = "value"
 
 # Message
 MESSAGE_ACCESS_TOKEN = "access_token"
+MESSAGE_ERROR = "error"
 MESSAGE_ID = "id"
 MESSAGE_TYPE = "type"
 MESSAGE_TYPE_AUTH = "auth"
