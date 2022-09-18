@@ -35,7 +35,7 @@ async def setup_complete() -> None:
     #     for subscribed_entity in self._database.get_data(SubscribedEntities)
     # ]
     # homeassistant.id_states = await self.subscribe_entities(self.subscribed_entities)
-    gui = GUI()
+    gui = GUI(settings)
     gui.setup()
 
 

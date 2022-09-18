@@ -6,6 +6,7 @@ from PySide6 import QtWidgets
 from qt_material import apply_stylesheet
 
 from ..base import Base
+from ..settings import Settings
 from .settings import GUISettings
 
 
@@ -34,10 +35,14 @@ class StoppableThread(Thread):
 class GUI(Base):
     """GUI"""
 
-    def __init__(self):
+    def __init__(
+        self,
+        settings: Settings,
+    ):
         """Initialize"""
         super().__init__()
         self._application = None
+        self._settings = settings
         self._stopping = False
 
         self.gui_settings = None
@@ -49,7 +54,7 @@ class GUI(Base):
         self._application = QtWidgets.QApplication()
         apply_stylesheet(self._application, theme="dark_cyan.xml")
 
-        self.gui_settings = GUISettings()
+        self.gui_settings = GUISettings(self._settings)
         self.gui_settings.resize(800, 600)
         self.gui_settings.show()
 
