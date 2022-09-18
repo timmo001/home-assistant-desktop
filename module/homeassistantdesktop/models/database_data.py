@@ -21,3 +21,10 @@ class Secrets(Data, table=True):
 
 class Settings(Data, table=True):
     """Database Data Settings"""
+
+
+class SubscribedEntities(SQLModel, table=True):
+    """Database Data Subscribed Entities"""
+
+    entity_id: str = Field(primary_key=True, nullable=False)
+    timestamp: Optional[float] = Field(default=None, nullable=True)
