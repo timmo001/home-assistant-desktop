@@ -8,6 +8,18 @@ from typing import Any, Optional
 from pydantic import BaseModel, Extra, Field
 
 
+class Event(BaseModel):
+    """
+    Event
+    """
+
+    data: dict[str, Any] = Field(..., description="Data")
+    event_type: str = Field(..., description="Event Type")
+    time_fired: str = Field(..., description="Time Fired")
+    origin: str = Field(..., description="Origin")
+    context: dict[str, Any] = Field(..., description="Context")
+
+
 class Response(BaseModel):
     """
     Response
@@ -21,6 +33,6 @@ class Response(BaseModel):
     success: Optional[bool] = Field(None, description="Success")
     error: Optional[dict[str, Any]] = Field(None, description="Error")
     message: Optional[str] = Field(None, description="Message")
-    event_type: Optional[str] = Field(None, description="Event Type")
+    event: Optional[Event] = Field(None, description="Event")
     result: Optional[Any] = Field(None, description="Result")
     ha_version: Optional[str] = Field(None, description="Home Assistant Version")

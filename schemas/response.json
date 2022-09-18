@@ -22,9 +22,32 @@
       "type": "string",
       "description": "Message"
     },
-    "event_type": {
-      "type": "string",
-      "description": "Event Type"
+    "event": {
+      "type": "object",
+      "description": "Event",
+      "properties": {
+        "data": {
+          "type": "object",
+          "description": "Data"
+        },
+        "event_type": {
+          "type": "string",
+          "description": "Event Type"
+        },
+        "time_fired": {
+          "type": "string",
+          "description": "Time Fired"
+        },
+        "origin": {
+          "type": "string",
+          "description": "Origin"
+        },
+        "context": {
+          "type": "object",
+          "description": "Context"
+        }
+      },
+      "required": ["data", "event_type", "time_fired", "origin", "context"]
     },
     "result": {
       "description": "Result"

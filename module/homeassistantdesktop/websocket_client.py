@@ -135,7 +135,7 @@ class WebSocketClient(Base):
 
             response = Response(**message)
 
-            self._logger.info(
+            self._logger.debug(
                 "Response: %s",
                 response.json(
                     include={
