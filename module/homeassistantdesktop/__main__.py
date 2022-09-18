@@ -7,7 +7,7 @@ import logging
 import typer
 
 from ._version import __version__
-from .const import SETTING_LOG_LEVEL
+from .const import MESSAGE_STATE_CHANGED, SETTING_LOG_LEVEL
 from .database import Database
 from .homeassistant import HomeAssistant
 from .logger import setup_logger
@@ -28,7 +28,13 @@ async def setup() -> None:
 async def setup_complete() -> None:
     """Setup complete"""
     logger.info("Setup complete")
-    if homeassistant.states is not None:
+    await homeassistant.subscribe_events(MESSAGE_STATE_CHANGED)
+    # homeassistant.subscribed_entities: list[str] = [
+    #     subscribed_entity.entity_id
+    #     for subscribed_entity in self._database.get_data(SubscribedEntities)
+    # ]
+    # homeassistant.id_states = await self.subscribe_entities(self.subscribed_entities)
+
 
 @app.command(name="main", short_help="Run main application")
 def main() -> None:

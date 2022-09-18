@@ -85,12 +85,6 @@ class HomeAssistant(Base):
             await self.get_config()
             await self.get_services()
             await self.get_states()
-            await self.subscribe_events(MESSAGE_STATE_CHANGED)
-            # self.subscribed_entities: list[str] = [
-            #     subscribed_entity.entity_id
-            #     for subscribed_entity in self._database.get_data(SubscribedEntities)
-            # ]
-            # self.id_states = await self.subscribe_entities(self.subscribed_entities)
         elif response.type == MESSAGE_TYPE_AUTH_INVALID:
             self._logger.error("Authentication failed: %s", response.message)
         elif response.type == MESSAGE_TYPE_SUCCESS:
@@ -100,15 +94,18 @@ class HomeAssistant(Base):
             if response.id == self.id_config and response.result is not None:
                 self.config = Config(**response.result)
                 self._logger.info("Set Home Assistant config")
+                await self.check_data()
             elif response.id == self.id_services and response.result is not None:
                 self.services = response.result
                 self._logger.info("Set Home Assistant services")
+                await self.check_data()
             elif response.id == self.id_states and response.result is not None:
                 if self.states is None:
                     self.states = {}
                 for state in response.result:
                     self.states[state["entity_id"]] = state
                 self._logger.info("Set Home Assistant states")
+                await self.check_data()
         elif response.type == MESSAGE_TYPE_EVENT and response.event is not None:
             self._logger.debug("Received event: %s", response.event)
             if (
@@ -125,13 +122,6 @@ class HomeAssistant(Base):
         else:
             self._logger.info("Received unused/unknown message type: %s", response.type)
             self._logger.debug("Received unused/unknown message: %s", response.json())
-
-        if (
-            self.config is not None
-            and self.services is not None
-            and self.states is not None
-        ):
-            await self._setup_complete()
 
     async def authenticate(self) -> None:
         """Authenticate with Home Assistant"""
@@ -158,6 +148,15 @@ class HomeAssistant(Base):
         #     message = "Authentication failed: %s", response.message
         #     self._logger.error(message)
         #     raise AuthenticationException(message)
+
+    async def check_data(self) -> None:
+        """Check required data is available"""
+        if (
+            self.config is not None
+            and self.services is not None
+            and self.states is not None
+        ):
+            await self._setup_complete()
 
     async def connect(self) -> None:
         """Connect to Home Assistant"""
