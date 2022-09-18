@@ -16,7 +16,7 @@ class Response(BaseModel):
     class Config:
         extra = Extra.allow
 
-    id: Optional[str] = Field(None, description="Message ID")
+    id: Optional[Any] = Field(None, description="Message ID")
     type: str = Field(..., description="Type")
     success: Optional[bool] = Field(None, description="Success")
     message: Optional[str] = Field(None, description="Message")

@@ -4,7 +4,6 @@
   "description": "Response",
   "properties": {
     "id": {
-      "type": "string",
       "description": "Message ID"
     },
     "type": {
