@@ -9,6 +9,7 @@ import typer
 from ._version import __version__
 from .const import MESSAGE_STATE_CHANGED, SETTING_LOG_LEVEL
 from .database import Database
+from .gui import GUI
 from .homeassistant import HomeAssistant
 from .logger import setup_logger
 from .settings import Settings
@@ -34,6 +35,8 @@ async def setup_complete() -> None:
     #     for subscribed_entity in self._database.get_data(SubscribedEntities)
     # ]
     # homeassistant.id_states = await self.subscribe_entities(self.subscribed_entities)
+    gui = GUI()
+    gui.setup()
 
 
 @app.command(name="main", short_help="Run main application")
