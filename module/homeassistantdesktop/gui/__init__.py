@@ -2,6 +2,7 @@
 from collections.abc import Callable
 from threading import Event, Thread
 from typing import Optional
+from webbrowser import open_new_tab
 
 from PySide6 import QtWidgets
 from qt_material import apply_stylesheet
@@ -104,6 +105,9 @@ class GUI(Base):
         if command == "exit":
             self.cleanup()
             self._callback(command)
+        elif command == "homeassistant":
+            self._logger.info("Open Home Assistant")
+            open_new_tab(self._homeassistant.get_http_url())
         elif command == "settings":
             self._logger.info("Show settings")
             self.gui_settings = GUISettings(

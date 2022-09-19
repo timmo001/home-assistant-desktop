@@ -28,6 +28,9 @@ from .const import (
     MESSAGE_TYPE_SUBSCRIBE_EVENTS,
     MESSAGE_TYPE_SUCCESS,
     SECRET_HOME_ASSISTANT_TOKEN,
+    SETTING_HOME_ASSISTANT_HOST,
+    SETTING_HOME_ASSISTANT_PORT,
+    SETTING_HOME_ASSISTANT_SECURE,
 )
 from .database import Database
 from .exceptions import (
@@ -59,6 +62,7 @@ class HomeAssistant(Base):
         self._websocket_client = WebSocketClient(settings)
 
         self.config: Optional[Config] = None
+        self.http_url: Optional[str] = None
         self.id_config: Optional[int] = None
         self.id_services: Optional[int] = None
         self.id_states: Optional[int] = None
@@ -283,6 +287,13 @@ class HomeAssistant(Base):
         # self._logger.info("Received states: %s", response.json())
         # self.states = response.result
         # self._logger.info("Set Home Assistant states")
+
+    def get_http_url(self) -> str:
+        """Get the Home Assistant HTTP URL"""
+        return (
+            f"http{'s' if self._settings.get(SETTING_HOME_ASSISTANT_SECURE) is True else ''}://"
+            + f"{self._settings.get(SETTING_HOME_ASSISTANT_HOST)}:{self._settings.get(SETTING_HOME_ASSISTANT_PORT)}"
+        )
 
     async def subscribe_entities(
         self,

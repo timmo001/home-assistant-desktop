@@ -35,6 +35,9 @@ class GUITray(Base, QtWidgets.QSystemTrayIcon):
 
         self.menu = QtWidgets.QMenu()
 
+        self.menu_homeassistant = QtGui.QAction("Open Home Assistant")
+        self.menu_homeassistant.triggered.connect(self._on_menu_homeassistant)  # type: ignore
+
         self.menu_settings = QtGui.QAction("Settings")
         self.menu_settings.triggered.connect(self._on_menu_settings)  # type: ignore
 
@@ -66,6 +69,12 @@ class GUITray(Base, QtWidgets.QSystemTrayIcon):
         """Menu Exit"""
         self._logger.info("Menu Exit")
         self._callback("exit")
+
+    @QtCore.Slot()
+    def _on_menu_homeassistant(self) -> None:
+        """Menu Exit"""
+        self._logger.info("Menu Home Assistant")
+        self._callback("homeassistant")
 
     @QtCore.Slot()
     def _on_menu_settings(self) -> None:
@@ -105,6 +114,8 @@ class GUITray(Base, QtWidgets.QSystemTrayIcon):
                     "Menu item: %s", getattr(self, f"menu_{entity}").text()
                 )
                 self.menu.addAction(getattr(self, f"menu_{entity}"))
+            self.menu.addSeparator()
+            self.menu.addAction(self.menu_homeassistant)
             self.menu.addSeparator()
             self.menu.addAction(self.menu_settings)
             self.menu.addSeparator()
