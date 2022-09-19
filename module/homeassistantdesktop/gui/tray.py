@@ -12,8 +12,8 @@ class GUITray(QtWidgets.QSystemTrayIcon):
 
     def __init__(
         self,
-        settings: Settings,
         callback: Callable[[str], None],
+        settings: Settings,
     ):
         """Initialize"""
         super().__init__(
