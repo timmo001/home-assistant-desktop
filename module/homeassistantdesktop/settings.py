@@ -76,12 +76,16 @@ class Settings(Base):
     def get(
         self,
         key: str,
+        default: Union[bool, float, int, str, list[Any], dict[str, Any], None] = None,
     ) -> Union[bool, float, int, str, list[Any], dict[str, Any], None]:
         """Get setting"""
         record = self._database.get_data_item_by_key(DatabaseSettings, key)
         if record is None or record.value is None:
             return None
-        return convert_string_to_correct_type(record.value)
+        result = convert_string_to_correct_type(record.value)
+        if result is None:
+            return default
+        return result
 
     def get_secret(
         self,

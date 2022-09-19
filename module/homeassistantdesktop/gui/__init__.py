@@ -109,6 +109,7 @@ class GUI(Base):
             self.gui_settings = GUISettings(
                 self._callback,
                 self._settings,
+                self._homeassistant,
             )
             self.gui_settings.resize(1080, 680)
             self.gui_settings.show()

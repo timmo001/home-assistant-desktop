@@ -1,5 +1,6 @@
 """Home Assistant Desktop: GUI - Settings"""
 from collections.abc import Callable
+import json
 
 from PySide6 import QtCore, QtGui, QtWidgets
 
@@ -9,8 +10,10 @@ from ..const import (
     SETTING_HOME_ASSISTANT_HOST,
     SETTING_HOME_ASSISTANT_PORT,
     SETTING_HOME_ASSISTANT_SECURE,
+    SETTING_HOME_ASSISTANT_SUBSCRIBED_ENTITIES,
     SETTING_LOG_LEVEL,
 )
+from ..homeassistant import HomeAssistant
 from ..settings import Settings
 
 
@@ -21,11 +24,13 @@ class GUISettings(QtWidgets.QWidget):
         self,
         callback: Callable[[str], None],
         settings: Settings,
+        homeassistant: HomeAssistant,
     ):
         """Initialize"""
         super().__init__()
 
         self._callback = callback
+        self._homeassistant = homeassistant
         self._settings = settings
 
         setting_autostart: bool = bool(self._settings.get(SETTING_AUTOSTART))
@@ -41,6 +46,9 @@ class GUISettings(QtWidgets.QWidget):
         )
         secret_home_assistant_token: str = str(
             self._settings.get_secret(SECRET_HOME_ASSISTANT_TOKEN)
+        )
+        setting_home_assistant_subscribed_entities = self._settings.get(
+            SETTING_HOME_ASSISTANT_SUBSCRIBED_ENTITIES, []
         )
 
         label_heading = QtWidgets.QLabel("Settings")
@@ -127,16 +135,30 @@ class GUISettings(QtWidgets.QWidget):
         label_home_assistant_token.setFont(QtGui.QFont("Roboto", 10))
         self.input_home_assistant_token = QtWidgets.QLineEdit()
         self.input_home_assistant_token.setText(secret_home_assistant_token)
-        # self.input_home_assistant_token.setEchoMode(
-        #     QtWidgets.QLineEdit.EchoMode.Password
-        # )
-        # self.input_home_assistant_token.setPlaceholderText("********")
         layout_home_assistant_token = QtWidgets.QHBoxLayout()
         layout_home_assistant_token.setSpacing(8)
         layout_home_assistant_token.setContentsMargins(8, 0, 8, 0)
         layout_home_assistant_token.addWidget(label_home_assistant_token, stretch=1)
         layout_home_assistant_token.addWidget(
             self.input_home_assistant_token, stretch=2, alignment=QtCore.Qt.AlignRight
+        )
+
+        label_home_assistant_subscribed_entities = QtWidgets.QLabel("Entities")
+        label_home_assistant_subscribed_entities.setFont(QtGui.QFont("Roboto", 10))
+        self.input_home_assistant_subscribed_entities = QtWidgets.QLineEdit()
+        self.input_home_assistant_subscribed_entities.setText(
+            json.dumps(setting_home_assistant_subscribed_entities)
+        )
+        layout_home_assistant_subscribed_entities = QtWidgets.QHBoxLayout()
+        layout_home_assistant_subscribed_entities.setSpacing(8)
+        layout_home_assistant_subscribed_entities.setContentsMargins(8, 0, 8, 0)
+        layout_home_assistant_subscribed_entities.addWidget(
+            label_home_assistant_subscribed_entities, stretch=1
+        )
+        layout_home_assistant_subscribed_entities.addWidget(
+            self.input_home_assistant_subscribed_entities,
+            stretch=2,
+            alignment=QtCore.Qt.AlignRight,
         )
 
         layout_general = QtWidgets.QVBoxLayout()
@@ -152,6 +174,9 @@ class GUISettings(QtWidgets.QWidget):
         layout_home_assistant.addLayout(layout_home_assistant_port, stretch=0)
         layout_home_assistant.addLayout(layout_home_assistant_secure, stretch=0)
         layout_home_assistant.addLayout(layout_home_assistant_token, stretch=0)
+        layout_home_assistant.addLayout(
+            layout_home_assistant_subscribed_entities, stretch=0
+        )
 
         self.button_save = QtWidgets.QPushButton("Save")
 
@@ -190,6 +215,10 @@ class GUISettings(QtWidgets.QWidget):
         )
         self._settings.set_secret(
             SECRET_HOME_ASSISTANT_TOKEN, str(self.input_home_assistant_token.text())
+        )
+        self._settings.set(
+            SETTING_HOME_ASSISTANT_SUBSCRIBED_ENTITIES,
+            str(self.input_home_assistant_subscribed_entities.text()),
         )
         self.close()
         self._callback("settings_updated")
