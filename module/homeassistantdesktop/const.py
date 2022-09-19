@@ -51,6 +51,7 @@ SETTING_AUTOSTART = "autostart"
 SETTING_HOME_ASSISTANT_HOST = "home_assistant_host"
 SETTING_HOME_ASSISTANT_PORT = "home_assistant_port"
 SETTING_HOME_ASSISTANT_SECURE = "home_assistant_secure"
+SETTING_HOME_ASSISTANT_SUBSCRIBED_ENTITIES = "home_assistant_subscribed_entities"
 SETTING_LOG_LEVEL = "log_level"
 
 # Models

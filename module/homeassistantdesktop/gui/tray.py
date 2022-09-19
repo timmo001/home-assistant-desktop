@@ -68,12 +68,7 @@ class GUITray(Base, QtWidgets.QSystemTrayIcon):
 
     def update(self) -> None:
         """Update"""
-        self._logger.info(
-            "Update tray: %s - %s - %s",
-            self._homeassistant.states is not None,
-            self._homeassistant.subscribed_entities is not None,
-            len(self._homeassistant.subscribed_entities),  # type: ignore
-        )
+        self._logger.info("Update tray")
         if (
             self._homeassistant.states is not None
             and self._homeassistant.subscribed_entities is not None

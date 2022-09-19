@@ -7,12 +7,15 @@ import logging
 import typer
 
 from ._version import __version__
-from .const import MESSAGE_STATE_CHANGED, SETTING_LOG_LEVEL
+from .const import (
+    MESSAGE_STATE_CHANGED,
+    SETTING_HOME_ASSISTANT_SUBSCRIBED_ENTITIES,
+    SETTING_LOG_LEVEL,
+)
 from .database import Database
 from .gui import GUI
 from .homeassistant import HomeAssistant
 from .logger import setup_logger
-from .models.database_data import SubscribedEntities
 from .settings import Settings
 
 app = typer.Typer()
@@ -31,10 +34,21 @@ async def setup_complete() -> None:
     """Setup complete"""
     logger.info("Setup complete")
     await homeassistant.subscribe_events(MESSAGE_STATE_CHANGED)
-    homeassistant.subscribed_entities = [
-        subscribed_entity.entity_id
-        for subscribed_entity in database.get_data(SubscribedEntities)
-    ]
+
+    settings.set(
+        SETTING_HOME_ASSISTANT_SUBSCRIBED_ENTITIES,
+        str(
+            [
+                "sensor.office_clock_temperature",
+                "sensor.office_clock_humidity",
+                "sensor.oneplus_8_pro_last_update_trigger",
+            ]
+        ),
+    )
+
+    subscribed_entities = settings.get(SETTING_HOME_ASSISTANT_SUBSCRIBED_ENTITIES)
+    if subscribed_entities is not None and isinstance(subscribed_entities, list):
+        homeassistant.subscribed_entities = subscribed_entities
     gui = GUI(settings, homeassistant)
     gui.setup()
 
