@@ -27,11 +27,15 @@ class GUITray(QtWidgets.QSystemTrayIcon):
 
         self.menu = QtWidgets.QMenu()
 
-        self.menu_settings = QtGui.QAction("Settings")
-        self.menu_settings.triggered.connect(self._on_menu_settings)  # type: ignore
+        menu_settings = QtGui.QAction("Settings")
+        menu_settings.triggered.connect(self._on_menu_settings)  # type: ignore
 
-        self.menu.addAction(self.menu_settings)
+        menu_exit = QtGui.QAction("Exit")
+        menu_exit.triggered.connect(self._on_menu_exit)  # type: ignore
+
+        self.menu.addAction(menu_settings)
         self.menu.addSeparator()
+        self.menu.addAction(menu_exit)
 
         self.setContextMenu(self.menu)
 
@@ -43,6 +47,11 @@ class GUITray(QtWidgets.QSystemTrayIcon):
         """Handle the activated signal"""
         if reason == QtWidgets.QSystemTrayIcon.Trigger:
             self.contextMenu().popup(QtGui.QCursor.pos())
+
+    @QtCore.Slot()
+    def _on_menu_exit(self) -> None:
+        """Menu Exit"""
+        self._callback("exit")
 
     @QtCore.Slot()
     def _on_menu_settings(self) -> None:

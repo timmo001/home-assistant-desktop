@@ -85,7 +85,10 @@ class GUI(Base):
     ) -> None:
         """Tray Callback"""
         self._logger.debug("Tray Callback")
-        if command == "settings":
+        if command == "exit":
+            self._logger.info("Exit application")
+            sys.exit(0)
+        elif command == "settings":
             self.gui_settings = GUISettings(self._settings)
             self.gui_settings.resize(1080, 680)
             self.gui_settings.show()
