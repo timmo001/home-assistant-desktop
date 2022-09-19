@@ -1,8 +1,8 @@
 """Home Assistant Desktop: Home Assistant"""
 
 import asyncio
-from collections.abc import Callable, Coroutine
-from typing import Any, Optional
+from collections.abc import Coroutine
+from typing import Any, Callable, Optional
 
 import async_timeout
 
@@ -328,5 +328,5 @@ class HomeAssistant(Base):
         callback: Callable[[], None],
     ) -> None:
         """Watch subscribed entities"""
-        self._logger.info("Watching subscribed entities")
+        self._logger.info("Watching subscribed entities: %s", self.subscribed_entities)
         self._watch_subscribed_entities_callback = callback
