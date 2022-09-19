@@ -86,7 +86,6 @@ async def setup_complete() -> None:
 
     gui = GUI(_callback, settings, homeassistant)
     gui.setup()
-    logger.info("GUI setup complete")
 
 
 @app.command(name="main", short_help="Run main application")
