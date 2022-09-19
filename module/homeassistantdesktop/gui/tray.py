@@ -41,6 +41,11 @@ class GUITray(Base, QtWidgets.QSystemTrayIcon):
         self.menu_exit = QtGui.QAction("Exit")
         self.menu_exit.triggered.connect(self._on_menu_exit)  # type: ignore
 
+        if self._homeassistant.subscribed_entities is not None:
+            for entity in self._homeassistant.subscribed_entities:
+                setattr(self, f"menu_{entity}", QtGui.QAction(entity))
+                self.menu.addAction(getattr(self, f"menu_{entity}"))
+
         self.menu.addAction(self.menu_settings)
         self.menu.addSeparator()
         self.menu.addAction(self.menu_exit)
@@ -76,20 +81,36 @@ class GUITray(Base, QtWidgets.QSystemTrayIcon):
             and self._homeassistant.subscribed_entities is not None
             and len(self._homeassistant.subscribed_entities) > 0
         ):
-            tooltip = ""
+            entities: list[str] = []
             for entity in self._homeassistant.subscribed_entities:
                 state = self._homeassistant.states.get(entity)
                 self._logger.info("State: %s", state)
                 if state is not None:
-                    if len(tooltip) > 0:
-                        tooltip += "\n"
-                    tooltip += (
-                        f"{state['attributes']['friendly_name']}: {state['state']}"
-                    )
+                    text = f"{state['attributes']['friendly_name']}: {state['state']}"
                     unit_of_measurement = state["attributes"].get("unit_of_measurement")
                     if unit_of_measurement is not None:
-                        tooltip += unit_of_measurement
-                    self._logger.info(tooltip)
+                        text += unit_of_measurement
+
+                    self._logger.info(text)
+                    entities.append(text)
+
+            tooltip = "\n".join(entities)
+            self._logger.info("Tooltip: %s", tooltip)
+            self.setToolTip(tooltip)
+
+            self.menu = QtWidgets.QMenu()
+            for entity in entities:
+                setattr(self, f"menu_{entity}", QtGui.QAction(entity))
+                self._logger.info(
+                    "Menu item: %s", getattr(self, f"menu_{entity}").text()
+                )
+                self.menu.addAction(getattr(self, f"menu_{entity}"))
+            self.menu.addSeparator()
+            self.menu.addAction(self.menu_settings)
+            self.menu.addSeparator()
+            self.menu.addAction(self.menu_exit)
+
+            self.setContextMenu(self.menu)
 
             # pixmap = QtGui.QPixmap(48, 48)
             # pixmap.fill(QtCore.Qt.transparent)
@@ -101,6 +122,4 @@ class GUITray(Base, QtWidgets.QSystemTrayIcon):
             #     state["state"],
             # )
             # painter.end()
-
             # self.setIcon(QtGui.QIcon(pixmap))
-            self.setToolTip(tooltip)
