@@ -84,7 +84,7 @@ class GUI(Base):
         command: str,
     ) -> None:
         """Tray Callback"""
-        self._logger.debug("Tray Callback")
+        self._logger.debug("Tray Callback: %s", command)
         if command == "exit":
             self._logger.info("Exit application")
             sys.exit(0)
