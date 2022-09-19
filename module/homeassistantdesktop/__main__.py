@@ -35,18 +35,8 @@ async def setup_complete() -> None:
     logger.info("Setup complete")
     await homeassistant.subscribe_events(MESSAGE_STATE_CHANGED)
 
-    settings.set(
-        SETTING_HOME_ASSISTANT_SUBSCRIBED_ENTITIES,
-        str(
-            [
-                "sensor.office_clock_temperature",
-                "sensor.office_clock_humidity",
-                "sensor.oneplus_8_pro_last_update_trigger",
-            ]
-        ),
-    )
-
     subscribed_entities = settings.get(SETTING_HOME_ASSISTANT_SUBSCRIBED_ENTITIES)
+    logger.info("Subscribed entities: %s - %s", subscribed_entities)
     if subscribed_entities is not None and isinstance(subscribed_entities, list):
         homeassistant.subscribed_entities = subscribed_entities
     gui = GUI(settings, homeassistant)

@@ -16,6 +16,7 @@ from .const import (
     SETTING_HOME_ASSISTANT_HOST,
     SETTING_HOME_ASSISTANT_PORT,
     SETTING_HOME_ASSISTANT_SECURE,
+    SETTING_HOME_ASSISTANT_SUBSCRIBED_ENTITIES,
     SETTING_LOG_LEVEL,
 )
 from .database import Database
@@ -61,6 +62,8 @@ class Settings(Base):
             self.set(SETTING_HOME_ASSISTANT_PORT, "8123")
         if self.get(SETTING_HOME_ASSISTANT_SECURE) is None:
             self.set(SETTING_HOME_ASSISTANT_SECURE, str(False))
+        if self.get(SETTING_HOME_ASSISTANT_SUBSCRIBED_ENTITIES) is None:
+            self.set(SETTING_HOME_ASSISTANT_SUBSCRIBED_ENTITIES, "[]")
 
     def get_all(self) -> list[DatabaseData]:
         """Get settings"""
