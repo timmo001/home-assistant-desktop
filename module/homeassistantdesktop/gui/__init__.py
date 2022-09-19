@@ -7,6 +7,7 @@ from PySide6 import QtWidgets
 from qt_material import apply_stylesheet
 
 from ..base import Base
+from ..homeassistant import HomeAssistant
 from ..settings import Settings
 from .settings import GUISettings
 from .tray import GUITray
@@ -40,10 +41,12 @@ class GUI(Base):
     def __init__(
         self,
         settings: Settings,
+        homeassistant: HomeAssistant,
     ):
         """Initialize"""
         super().__init__()
         self._application: Optional[QtWidgets.QApplication] = None
+        self._homeassistant: HomeAssistant = homeassistant
         self._settings: Settings = settings
         self._stopping: bool = False
         self._thread: Optional[StoppableThread] = None
@@ -74,7 +77,12 @@ class GUI(Base):
             },
         )
 
-        self.gui_tray = GUITray(self._tray_callback, self._settings)
+        self.gui_tray = GUITray(
+            self._tray_callback,
+            self._settings,
+            self._homeassistant,
+        )
+        self.gui_tray.update()
         self.gui_tray.show()
 
         self._logger.info("GUI setup complete")

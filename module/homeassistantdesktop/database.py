@@ -12,7 +12,7 @@ from sqlmodel.sql.expression import Select, SelectOfScalar
 from .base import Base
 from .common import get_user_data_directory
 from .const import MODEL_SECRETS, MODEL_SETTINGS
-from .models.database_data import Secrets, Settings
+from .models.database_data import Secrets, Settings, SubscribedEntities
 
 TABLE_MAP: Mapping[str, Any] = {
     MODEL_SECRETS: Secrets,
@@ -98,3 +98,14 @@ class Database(Base):
             session.commit()
             if old_data is not None:
                 session.refresh(old_data)
+
+    def update_subscribed_entities(
+        self,
+        entities: list[str],
+    ) -> None:
+        """Update data"""
+        self.clear_table(SubscribedEntities)
+        with Session(self._engine, autoflush=True) as session:
+            for entity in entities:
+                session.add(SubscribedEntities(entity_id=entity, timestamp=time()))
+            session.commit()

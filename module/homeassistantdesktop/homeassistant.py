@@ -55,6 +55,7 @@ class HomeAssistant(Base):
         self._database = database
         self._settings = settings
         self._setup_complete = setup_complete
+        self._watch_subscribed_entities_callback: Optional[Callable[[], None]] = None
         self._websocket_client = WebSocketClient(settings)
 
         self.config: Optional[Config] = None
@@ -63,7 +64,7 @@ class HomeAssistant(Base):
         self.id_states: Optional[int] = None
         self.id_subscribed_entities: Optional[int] = None
         self.services: Optional[dict[str, dict[str, Any]]] = None
-        self.states: Optional[dict[str, dict]] = None
+        self.states: Optional[dict[str, Any]] = None
         self.subscribed_entities: Optional[list[str]] = None
 
     @property
@@ -106,6 +107,8 @@ class HomeAssistant(Base):
                     self.states[state["entity_id"]] = state
                 self._logger.info("Set Home Assistant states")
                 await self.check_data()
+                if self._watch_subscribed_entities_callback is not None:
+                    self._watch_subscribed_entities_callback()
         elif response.type == MESSAGE_TYPE_EVENT and response.event is not None:
             self._logger.debug("Received event: %s", response.event)
             if (
@@ -119,6 +122,15 @@ class HomeAssistant(Base):
                         self.states = {}
                     self.states[entity_id] = state
                     self._logger.debug("Updated Home Assistant state: %s", entity_id)
+                    if (
+                        self.subscribed_entities is not None
+                        and entity_id in self.subscribed_entities
+                    ):
+                        self._logger.debug(
+                            "Updated subscribed Home Assistant state: %s", entity_id
+                        )
+                        if self._watch_subscribed_entities_callback is not None:
+                            self._watch_subscribed_entities_callback()
         else:
             self._logger.info("Received unused/unknown message type: %s", response.type)
             self._logger.debug("Received unused/unknown message: %s", response.json())
@@ -310,3 +322,11 @@ class HomeAssistant(Base):
             include_id=True,
         )
         return self._websocket_client.current_id
+
+    def watch_subscribed_entities(
+        self,
+        callback: Callable[[], None],
+    ) -> None:
+        """Watch subscribed entities"""
+        self._logger.info("Watching subscribed entities")
+        self._watch_subscribed_entities_callback = callback
