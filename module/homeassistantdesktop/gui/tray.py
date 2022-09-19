@@ -70,6 +70,14 @@ class GUITray(Base, QtWidgets.QSystemTrayIcon):
         self._logger.info("Menu Exit")
         self._callback("exit")
 
+    def _on_menu_entity(
+        self,
+        entity: str,
+    ) -> None:
+        """Menu Entity"""
+        self._logger.info("Menu Entity")
+        self._callback(f"entity:{entity}")
+
     @QtCore.Slot()
     def _on_menu_homeassistant(self) -> None:
         """Menu Exit"""
@@ -110,6 +118,9 @@ class GUITray(Base, QtWidgets.QSystemTrayIcon):
             self.menu = QtWidgets.QMenu()
             for entity in entities:
                 setattr(self, f"menu_{entity}", QtGui.QAction(entity))
+                getattr(self, f"menu_{entity}").triggered.connect(
+                    lambda: self._on_menu_entity(entity)
+                )
                 self._logger.info(
                     "Menu item: %s", getattr(self, f"menu_{entity}").text()
                 )

@@ -346,6 +346,24 @@ class HomeAssistant(Base):
         )
         return self._websocket_client.current_id
 
+    async def toggle_entity(
+        self,
+        entity: str,
+    ) -> None:
+        """Toggle an entity"""
+        entity_split = entity.split(".")
+        if len(entity_split) != 2 or entity_split[0] not in ["switch", "light"]:
+            return
+
+        self._logger.info("Toggling entity %s", entity)
+        await self.call_service(
+            entity_split[0],
+            "toggle",
+            {
+                "entity_id": entity,
+            },
+        )
+
     def watch_subscribed_entities(
         self,
         callback: Callable[[], None],

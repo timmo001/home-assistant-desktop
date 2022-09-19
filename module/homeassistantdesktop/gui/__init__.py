@@ -96,6 +96,16 @@ class GUI(Base):
             )
             self.gui_settings.resize(1080, 680)
             self.gui_settings.show()
+        elif command.startswith("entity:"):
+            entity = command[7:]
+            self._logger.debug("Entity: %s", entity)
+            entity_split = entity.split(".")
+            if entity_split[0] in [
+                "input_boolean",
+                "light",
+                "switch",
+            ]:
+                asyncio.create_task(self._homeassistant.toggle_entity(entity))
 
     def cleanup(self) -> None:
         """Cleanup"""
