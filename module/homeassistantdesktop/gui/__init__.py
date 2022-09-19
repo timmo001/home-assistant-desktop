@@ -54,10 +54,26 @@ class GUI(Base):
         self._logger.info("Setup GUI")
 
         self._application = QtWidgets.QApplication()
-        apply_stylesheet(self._application, theme="dark_cyan.xml")
+        apply_stylesheet(
+            self._application,
+            theme="dark_cyan.xml",
+            extra={
+                # Button colors
+                "danger": "#dc3545",
+                "warning": "#ffc107",
+                "success": "#17a2b8",
+                # Font
+                "font_family": "Roboto",
+                "font_size": "14px",
+                # Density
+                "density_scale": "0",
+                # Button Shape
+                "button_shape": "default",
+            },
+        )
 
         self.gui_settings = GUISettings(self._settings)
-        self.gui_settings.resize(800, 600)
+        self.gui_settings.resize(1024, 768)
         self.gui_settings.show()
 
         sys.exit(self._application.exec())

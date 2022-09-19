@@ -40,10 +40,13 @@ class GUISettings(QtWidgets.QWidget):
         )
 
         label_heading = QtWidgets.QLabel("Settings")
-        label_heading.setFont(QtGui.QFont("Roboto Light", 48))
+        label_heading.setFont(QtGui.QFont("Roboto", 38, QtGui.QFont.Light))
+
+        label_general = QtWidgets.QLabel("General")
+        label_general.setFont(QtGui.QFont("Roboto", 24, QtGui.QFont.Light))
 
         label_autostart = QtWidgets.QLabel("Autostart")
-        # label_autostart.setFont(QtGui.QFont("Roboto Regular", 24))
+        label_autostart.setFont(QtGui.QFont("Roboto", 10))
         self.input_autostart = QtWidgets.QCheckBox()
         self.input_autostart.setCheckState(
             QtCore.Qt.CheckState.Checked
@@ -58,7 +61,7 @@ class GUISettings(QtWidgets.QWidget):
         )
 
         label_log_level = QtWidgets.QLabel("Log Level")
-        # label_log_level.setFont(QtGui.QFont("Roboto Regular", 24))
+        label_log_level.setFont(QtGui.QFont("Roboto", 10))
         self.input_log_level = QtWidgets.QLineEdit()
         self.input_log_level.setPlaceholderText("INFO")
         self.input_log_level.setText(setting_log_level)
@@ -69,8 +72,11 @@ class GUISettings(QtWidgets.QWidget):
             self.input_log_level, stretch=1, alignment=QtCore.Qt.AlignRight
         )
 
-        label_home_assistant_host = QtWidgets.QLabel("Home Assistant Host")
-        # label_home_assistant_host.setFont(QtGui.QFont("Roboto Regular", 24))
+        label_home_assistant = QtWidgets.QLabel("Home Assistant")
+        label_home_assistant.setFont(QtGui.QFont("Roboto", 24, QtGui.QFont.Light))
+
+        label_home_assistant_host = QtWidgets.QLabel("Host")
+        label_home_assistant_host.setFont(QtGui.QFont("Roboto", 10))
         self.input_home_assistant_host = QtWidgets.QLineEdit()
         self.input_home_assistant_host.setPlaceholderText("homeassistant.local")
         self.input_home_assistant_host.setText(setting_home_assistant_host)
@@ -81,8 +87,8 @@ class GUISettings(QtWidgets.QWidget):
             self.input_home_assistant_host, stretch=1, alignment=QtCore.Qt.AlignRight
         )
 
-        label_home_assistant_port = QtWidgets.QLabel("Home Assistant Port")
-        # label_home_assistant_port.setFont(QtGui.QFont("Roboto Regular", 24))
+        label_home_assistant_port = QtWidgets.QLabel("Port")
+        label_home_assistant_port.setFont(QtGui.QFont("Roboto", 10))
         self.input_home_assistant_port = QtWidgets.QLineEdit()
         self.input_home_assistant_port.setPlaceholderText("8123")
         self.input_home_assistant_port.setText(setting_home_assistant_port)
@@ -93,8 +99,8 @@ class GUISettings(QtWidgets.QWidget):
             self.input_home_assistant_port, stretch=1, alignment=QtCore.Qt.AlignRight
         )
 
-        label_home_assistant_secure = QtWidgets.QLabel("Home Assistant SSL")
-        # label_home_assistant_secure.setFont(QtGui.QFont("Roboto Regular", 24))
+        label_home_assistant_secure = QtWidgets.QLabel("SSL")
+        label_home_assistant_secure.setFont(QtGui.QFont("Roboto", 10))
         self.input_home_assistant_secure = QtWidgets.QCheckBox()
         self.input_home_assistant_secure.setCheckState(
             QtCore.Qt.CheckState.Checked
@@ -108,35 +114,42 @@ class GUISettings(QtWidgets.QWidget):
             self.input_home_assistant_secure, stretch=1, alignment=QtCore.Qt.AlignRight
         )
 
-        label_home_assistant_token = QtWidgets.QLabel("Home Assistant Token")
-        # label_home_assistant_token.setFont(QtGui.QFont("Roboto Regular", 24))
+        label_home_assistant_token = QtWidgets.QLabel("Token")
+        label_home_assistant_token.setFont(QtGui.QFont("Roboto", 10))
         self.input_home_assistant_token = QtWidgets.QLineEdit()
         self.input_home_assistant_token.setText(secret_home_assistant_token)
-        self.input_home_assistant_token.setEchoMode(
-            QtWidgets.QLineEdit.EchoMode.Password
-        )
-        self.input_home_assistant_token.setPlaceholderText("********")
+        # self.input_home_assistant_token.setEchoMode(
+        #     QtWidgets.QLineEdit.EchoMode.Password
+        # )
+        # self.input_home_assistant_token.setPlaceholderText("********")
         layout_home_assistant_token = QtWidgets.QHBoxLayout()
         layout_home_assistant_token.setSpacing(8)
-        layout_home_assistant_token.addWidget(label_home_assistant_token, stretch=0)
+        layout_home_assistant_token.addWidget(label_home_assistant_token, stretch=1)
         layout_home_assistant_token.addWidget(
-            self.input_home_assistant_token, stretch=1, alignment=QtCore.Qt.AlignRight
+            self.input_home_assistant_token, stretch=2, alignment=QtCore.Qt.AlignRight
         )
 
-        layout_inner = QtWidgets.QVBoxLayout()
-        layout_inner.addLayout(layout_autostart, stretch=1)
-        layout_inner.addLayout(layout_log_level, stretch=1)
-        layout_inner.addLayout(layout_home_assistant_host, stretch=1)
-        layout_inner.addLayout(layout_home_assistant_port, stretch=1)
-        layout_inner.addLayout(layout_home_assistant_secure, stretch=1)
-        layout_inner.addLayout(layout_home_assistant_token, stretch=1)
+        layout_general = QtWidgets.QVBoxLayout()
+        layout_general.setContentsMargins(0, 16, 0, 16)
+        layout_general.addWidget(label_general, stretch=0)
+        layout_general.addLayout(layout_autostart, stretch=0)
+        layout_general.addLayout(layout_log_level, stretch=0)
+
+        layout_home_assistant = QtWidgets.QVBoxLayout()
+        layout_home_assistant.setContentsMargins(0, 16, 0, 16)
+        layout_home_assistant.addWidget(label_home_assistant, stretch=0)
+        layout_home_assistant.addLayout(layout_home_assistant_host, stretch=0)
+        layout_home_assistant.addLayout(layout_home_assistant_port, stretch=0)
+        layout_home_assistant.addLayout(layout_home_assistant_secure, stretch=0)
+        layout_home_assistant.addLayout(layout_home_assistant_token, stretch=0)
 
         self.button_save = QtWidgets.QPushButton("Save")
 
         layout = QtWidgets.QVBoxLayout(self)
         layout.setContentsMargins(64, 16, 64, 16)
         layout.addWidget(label_heading, stretch=0, alignment=QtCore.Qt.AlignTop)
-        layout.addLayout(layout_inner, stretch=1)
+        layout.addLayout(layout_general, stretch=0)
+        layout.addLayout(layout_home_assistant, stretch=0)
         layout.addWidget(self.button_save, stretch=0, alignment=QtCore.Qt.AlignBottom)
 
         self.button_save.clicked.connect(self.save)  # type: ignore
