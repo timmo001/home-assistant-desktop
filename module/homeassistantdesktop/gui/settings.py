@@ -55,6 +55,7 @@ class GUISettings(QtWidgets.QWidget):
         )
         layout_autostart = QtWidgets.QHBoxLayout()
         layout_autostart.setSpacing(8)
+        layout_autostart.setContentsMargins(8, 0, 8, 0)
         layout_autostart.addWidget(label_autostart, stretch=0)
         layout_autostart.addWidget(
             self.input_autostart, stretch=1, alignment=QtCore.Qt.AlignRight
@@ -67,6 +68,7 @@ class GUISettings(QtWidgets.QWidget):
         self.input_log_level.setText(setting_log_level)
         layout_log_level = QtWidgets.QHBoxLayout()
         layout_log_level.setSpacing(8)
+        layout_log_level.setContentsMargins(8, 0, 8, 0)
         layout_log_level.addWidget(label_log_level, stretch=0)
         layout_log_level.addWidget(
             self.input_log_level, stretch=1, alignment=QtCore.Qt.AlignRight
@@ -82,6 +84,7 @@ class GUISettings(QtWidgets.QWidget):
         self.input_home_assistant_host.setText(setting_home_assistant_host)
         layout_home_assistant_host = QtWidgets.QHBoxLayout()
         layout_home_assistant_host.setSpacing(8)
+        layout_home_assistant_host.setContentsMargins(8, 0, 8, 0)
         layout_home_assistant_host.addWidget(label_home_assistant_host, stretch=0)
         layout_home_assistant_host.addWidget(
             self.input_home_assistant_host, stretch=1, alignment=QtCore.Qt.AlignRight
@@ -94,6 +97,7 @@ class GUISettings(QtWidgets.QWidget):
         self.input_home_assistant_port.setText(setting_home_assistant_port)
         layout_home_assistant_port = QtWidgets.QHBoxLayout()
         layout_home_assistant_port.setSpacing(8)
+        layout_home_assistant_port.setContentsMargins(8, 0, 8, 0)
         layout_home_assistant_port.addWidget(label_home_assistant_port, stretch=0)
         layout_home_assistant_port.addWidget(
             self.input_home_assistant_port, stretch=1, alignment=QtCore.Qt.AlignRight
@@ -109,6 +113,7 @@ class GUISettings(QtWidgets.QWidget):
         )
         layout_home_assistant_secure = QtWidgets.QHBoxLayout()
         layout_home_assistant_secure.setSpacing(8)
+        layout_home_assistant_secure.setContentsMargins(8, 0, 8, 0)
         layout_home_assistant_secure.addWidget(label_home_assistant_secure, stretch=0)
         layout_home_assistant_secure.addWidget(
             self.input_home_assistant_secure, stretch=1, alignment=QtCore.Qt.AlignRight
@@ -124,6 +129,7 @@ class GUISettings(QtWidgets.QWidget):
         # self.input_home_assistant_token.setPlaceholderText("********")
         layout_home_assistant_token = QtWidgets.QHBoxLayout()
         layout_home_assistant_token.setSpacing(8)
+        layout_home_assistant_token.setContentsMargins(8, 0, 8, 0)
         layout_home_assistant_token.addWidget(label_home_assistant_token, stretch=1)
         layout_home_assistant_token.addWidget(
             self.input_home_assistant_token, stretch=2, alignment=QtCore.Qt.AlignRight
