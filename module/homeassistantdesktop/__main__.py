@@ -49,7 +49,6 @@ def _callback(command: str) -> None:
 
 async def setup(attempt: int = 1) -> None:
     """Setup"""
-    global CLOSING  # pylint: disable=global-statement
     if CLOSING:
         return
 
