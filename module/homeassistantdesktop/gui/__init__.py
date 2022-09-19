@@ -54,13 +54,13 @@ class GUI(Base):
         self.gui_settings: Optional[GUISettings] = None
         self.gui_tray: Optional[GUITray] = None
 
-    def _setup(self):
+    def _setup(self) -> int:
         """Setup"""
         self._logger.info("Setup GUI")
 
         if self._application is not None:
             self._logger.warning("GUI already setup")
-            return
+            return 0
 
         self._application = QtWidgets.QApplication()
         apply_stylesheet(
@@ -91,7 +91,7 @@ class GUI(Base):
 
         self._logger.info("GUI setup complete")
 
-        sys.exit(self._application.exec())
+        return self._application.exec()
 
     def _tray_callback(
         self,
@@ -101,6 +101,7 @@ class GUI(Base):
         self._logger.debug("Tray Callback: %s", command)
         if command == "exit":
             self._logger.info("Exit application")
+            self.cleanup()
             sys.exit(0)
         elif command == "settings":
             self.gui_settings = GUISettings(self._settings)
@@ -110,13 +111,12 @@ class GUI(Base):
     def cleanup(self) -> None:
         """Cleanup"""
         self._logger.info("Cleanup GUI")
+        self._stopping = True
         if self._application is not None:
             self._application.exit()
             self._application = None
         if self._thread is not None:
-            self._stopping = True
             self._thread.stop()
-            self._thread.join()
             self._thread = None
         self._stopping = False
 
