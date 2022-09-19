@@ -73,7 +73,7 @@ class GUI(Base):
         )
 
         self.gui_settings = GUISettings(self._settings)
-        self.gui_settings.resize(1000, 680)
+        self.gui_settings.resize(1080, 680)
         self.gui_settings.show()
 
         sys.exit(self._application.exec())
