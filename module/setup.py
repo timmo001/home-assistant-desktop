@@ -11,7 +11,7 @@ with io.open("requirements_setup.txt", encoding="utf-8") as f:
 with io.open("requirements.txt", encoding="utf-8") as f:
     requirements = f.read().splitlines()
 
-package_data = ["gui/icon.png"]
+package_data = ["icon.ico", "icon.png"]
 
 setup(
     name="homeassistantdesktop",

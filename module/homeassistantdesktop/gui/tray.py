@@ -22,7 +22,7 @@ class GUITray(Base, QtWidgets.QSystemTrayIcon):
         Base.__init__(self)
         QtWidgets.QSystemTrayIcon.__init__(
             self,
-            QtGui.QIcon(os.path.join(os.path.dirname(__file__), "icon.png")),
+            QtGui.QIcon(os.path.join(os.path.dirname(__file__), "../icon.png")),
         )
 
         self._callback = callback

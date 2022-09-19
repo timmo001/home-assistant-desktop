@@ -8,8 +8,10 @@ import sys
 import typer
 
 from ._version import __version__
+from .autostart import autostart_disable, autostart_enable
 from .const import (
     MESSAGE_STATE_CHANGED,
+    SETTING_AUTOSTART,
     SETTING_HOME_ASSISTANT_SUBSCRIBED_ENTITIES,
     SETTING_LOG_LEVEL,
 )
@@ -19,6 +21,7 @@ from .gui import GUI
 from .homeassistant import HomeAssistant
 from .logger import setup_logger
 from .settings import Settings
+from .shortcut import create_shortcuts
 
 app = typer.Typer()
 
@@ -56,6 +59,7 @@ async def setup(attempt: int = 1) -> None:
     if attempt > 3:
         logger.error("Exceeded 3 attempts to setup application. Exiting now..")
         sys.exit(1)
+
     try:
         await homeassistant.connect()
         attempt = 1
@@ -92,6 +96,16 @@ async def setup_complete() -> None:
 def main() -> None:
     """Run main application"""
     typer.secho("Starting main application", fg=typer.colors.GREEN)
+
+    autostart = settings.get(SETTING_AUTOSTART)
+    logger.info("Autostart enabled: %s", autostart)
+    if autostart:
+        autostart_enable()
+    else:
+        autostart_disable()
+
+    create_shortcuts()
+
     asyncio.run(setup())
 
 
