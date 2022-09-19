@@ -35,19 +35,17 @@ class GUITray(Base, QtWidgets.QSystemTrayIcon):
 
         self.menu = QtWidgets.QMenu()
 
-        menu_settings = QtGui.QAction("Settings")
-        menu_settings.triggered.connect(self._on_menu_settings)  # type: ignore
+        self.menu_settings = QtGui.QAction("Settings")
+        self.menu_settings.triggered.connect(self._on_menu_settings)  # type: ignore
 
-        menu_exit = QtGui.QAction("Exit")
-        menu_exit.triggered.connect(self._on_menu_exit)  # type: ignore
+        self.menu_exit = QtGui.QAction("Exit")
+        self.menu_exit.triggered.connect(self._on_menu_exit)  # type: ignore
 
-        self.menu.addAction(menu_settings)
+        self.menu.addAction(self.menu_settings)
         self.menu.addSeparator()
-        self.menu.addAction(menu_exit)
+        self.menu.addAction(self.menu_exit)
 
         self.setContextMenu(self.menu)
-
-        self._logger.info("Initialized")
 
     @QtCore.Slot()
     def _on_activated(
