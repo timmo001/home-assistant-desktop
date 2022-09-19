@@ -58,6 +58,10 @@ class GUI(Base):
         """Setup"""
         self._logger.info("Setup GUI")
 
+        if self._application is not None:
+            self._logger.warning("GUI already setup")
+            return
+
         self._application = QtWidgets.QApplication()
         apply_stylesheet(
             self._application,
@@ -103,8 +107,24 @@ class GUI(Base):
             self.gui_settings.resize(1080, 680)
             self.gui_settings.show()
 
+    def cleanup(self) -> None:
+        """Cleanup"""
+        self._logger.info("Cleanup GUI")
+        if self._application is not None:
+            self._application.quit()
+            self._application = None
+        if self._thread is not None:
+            self._stopping = True
+            self._thread.stop()
+            self._thread.join()
+            self._thread = None
+        self._stopping = False
+
     def setup(self) -> None:
         """Start the GUI"""
+        if self._application is not None:
+            self.cleanup()
+
         self._thread = StoppableThread(target=self._setup)
         self._thread.start()
         self._stopping = False

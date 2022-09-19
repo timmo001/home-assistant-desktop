@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import sys
 
 import typer
 
@@ -13,6 +14,7 @@ from .const import (
     SETTING_LOG_LEVEL,
 )
 from .database import Database
+from .exceptions import ConnectionClosedException, ConnectionErrorException
 from .gui import GUI
 from .homeassistant import HomeAssistant
 from .logger import setup_logger
@@ -23,11 +25,25 @@ database = Database()
 settings = Settings(database)
 
 
-async def setup() -> None:
+async def setup(attempt: int = 1) -> None:
     """Setup"""
-    logger.info("Setup")
-    await homeassistant.connect()
-    await homeassistant.listen()
+    logger.info("Setup: %s", attempt)
+    if attempt > 3:
+        logger.error("Exceeded 3 attempts to setup application. Exiting now..")
+        sys.exit(1)
+    try:
+        await homeassistant.connect()
+        await homeassistant.listen()
+    except ConnectionClosedException as exception:
+        logger.error("Connection closed: %s", exception)
+        logger.info("Retrying in 5 seconds..")
+        await asyncio.sleep(5)
+        await setup(attempt + 1)
+    except ConnectionErrorException as exception:
+        logger.error("Connection error: %s", exception)
+        logger.info("Retrying in 5 seconds..")
+        await asyncio.sleep(5)
+        await setup(attempt + 1)
 
 
 async def setup_complete() -> None:
@@ -36,7 +52,7 @@ async def setup_complete() -> None:
     await homeassistant.subscribe_events(MESSAGE_STATE_CHANGED)
 
     subscribed_entities = settings.get(SETTING_HOME_ASSISTANT_SUBSCRIBED_ENTITIES)
-    logger.info("Subscribed entities: %s - %s", subscribed_entities)
+    logger.info("Subscribed entities: %s", subscribed_entities)
     if subscribed_entities is not None and isinstance(subscribed_entities, list):
         homeassistant.subscribed_entities = subscribed_entities
     gui = GUI(settings, homeassistant)
