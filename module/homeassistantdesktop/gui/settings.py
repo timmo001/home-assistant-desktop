@@ -160,9 +160,18 @@ class GUISettings(QtWidgets.QWidget):
 
         self.button_save.clicked.connect(self.save)  # type: ignore
 
+    # pylint: disable=invalid-name
+    def closeEvent(
+        self,
+        event: QtGui.QCloseEvent,
+    ) -> None:
+        """Close the window instead of closing the app"""
+        event.ignore()
+        self.hide()
+
     @QtCore.Slot()
     def save(self):
-        """Save"""
+        """Save and close the window"""
         self._settings.set(SETTING_AUTOSTART, str(self.input_autostart.isChecked()))
         self._settings.set(SETTING_LOG_LEVEL, str(self.input_log_level.text()))
         self._settings.set(

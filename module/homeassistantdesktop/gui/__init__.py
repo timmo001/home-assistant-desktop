@@ -9,6 +9,7 @@ from qt_material import apply_stylesheet
 from ..base import Base
 from ..settings import Settings
 from .settings import GUISettings
+from .tray import GUITray
 
 
 class StoppableThread(Thread):
@@ -48,6 +49,7 @@ class GUI(Base):
         self._thread: Optional[StoppableThread] = None
 
         self.gui_settings: Optional[GUISettings] = None
+        self.gui_tray: Optional[GUITray] = None
 
     def _setup(self):
         """Setup"""
@@ -72,11 +74,21 @@ class GUI(Base):
             },
         )
 
-        self.gui_settings = GUISettings(self._settings)
-        self.gui_settings.resize(1080, 680)
-        self.gui_settings.show()
+        self.gui_tray = GUITray(self._settings, self._tray_callback)
+        self.gui_tray.show()
 
         sys.exit(self._application.exec())
+
+    def _tray_callback(
+        self,
+        command: str,
+    ) -> None:
+        """Tray Callback"""
+        self._logger.debug("Tray Callback")
+        if command == "settings":
+            self.gui_settings = GUISettings(self._settings)
+            self.gui_settings.resize(1080, 680)
+            self.gui_settings.show()
 
     def setup(self) -> None:
         """Start the GUI"""
