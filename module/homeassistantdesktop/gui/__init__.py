@@ -1,6 +1,6 @@
 """Home Assistant Desktop: GUI"""
 from threading import Event, Thread
-from typing import Optional
+from typing import Callable, Optional
 
 from PySide6 import QtWidgets
 from qt_material import apply_stylesheet
@@ -39,12 +39,14 @@ class GUI(Base):
 
     def __init__(
         self,
+        callback: Callable[[str], None],
         settings: Settings,
         homeassistant: HomeAssistant,
     ):
         """Initialize"""
         super().__init__()
         self._application: Optional[QtWidgets.QApplication] = None
+        self._callback: Callable[[str], None] = callback
         self._homeassistant: HomeAssistant = homeassistant
         self._settings: Settings = settings
         self._stopping: bool = False
@@ -100,11 +102,13 @@ class GUI(Base):
         self._logger.debug("Tray Callback: %s", command)
         if command == "exit":
             self.cleanup()
-            self._logger.info("Exit application")
-            exit(0)
+            self._callback(command)
         elif command == "settings":
             self._logger.info("Show settings")
-            self.gui_settings = GUISettings(self._settings)
+            self.gui_settings = GUISettings(
+                self._callback,
+                self._settings,
+            )
             self.gui_settings.resize(1080, 680)
             self.gui_settings.show()
 
@@ -112,6 +116,12 @@ class GUI(Base):
         """Cleanup"""
         self._logger.info("Cleanup GUI")
         self._stopping = True
+        if self.gui_settings is not None:
+            self.gui_settings.close()
+            self.gui_settings = None
+        if self.gui_tray is not None:
+            self.gui_tray.hide()
+            self.gui_tray = None
         if self._application is not None:
             self._application.exit()
             self._application = None

@@ -1,4 +1,6 @@
 """Home Assistant Desktop: GUI - Settings"""
+from typing import Callable
+
 from PySide6 import QtCore, QtGui, QtWidgets
 
 from ..const import (
@@ -17,11 +19,13 @@ class GUISettings(QtWidgets.QWidget):
 
     def __init__(
         self,
+        callback: Callable[[str], None],
         settings: Settings,
     ):
         """Initialize"""
         super().__init__()
 
+        self._callback = callback
         self._settings = settings
 
         setting_autostart: bool = bool(self._settings.get(SETTING_AUTOSTART))
@@ -188,3 +192,4 @@ class GUISettings(QtWidgets.QWidget):
             SECRET_HOME_ASSISTANT_TOKEN, str(self.input_home_assistant_token.text())
         )
         self.close()
+        self._callback("settings_updated")

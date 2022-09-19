@@ -20,12 +20,38 @@ from .logger import setup_logger
 from .settings import Settings
 
 app = typer.Typer()
+
+closing = False
+loop = asyncio.new_event_loop()
+
 database = Database()
 settings = Settings(database)
 
 
+def _callback(command: str) -> None:
+    """Callback"""
+    logger.info("Callback: %s", command)
+    if command == "exit":
+        logger.info("Exit application")
+        global closing
+        closing = True
+        asyncio.run(homeassistant.disconnect())
+        if loop is not None and loop.is_running():
+            for pending_task in asyncio.all_tasks():
+                pending_task.cancel()
+            loop.stop()
+        exit(0)
+    elif command == "settings_updated":
+        logger.info("Settings updated")
+        asyncio.run(setup())
+
+
 async def setup(attempt: int = 1) -> None:
     """Setup"""
+    global closing
+    if closing:
+        return
+
     logger.info("Setup: %s", attempt)
     if attempt > 3:
         logger.error("Exceeded 3 attempts to setup application. Exiting now..")
@@ -36,14 +62,16 @@ async def setup(attempt: int = 1) -> None:
         await homeassistant.listen()
     except ConnectionClosedException as exception:
         logger.error("Connection closed: %s", exception)
-        logger.info("Retrying in 5 seconds..")
-        await asyncio.sleep(5)
-        await setup(attempt + 1)
+        if not closing:
+            logger.info("Retrying in 5 seconds..")
+            await asyncio.sleep(5)
+            await setup(attempt + 1)
     except ConnectionErrorException as exception:
         logger.error("Connection error: %s", exception)
-        logger.info("Retrying in 5 seconds..")
-        await asyncio.sleep(5)
-        await setup(attempt + 1)
+        if not closing:
+            logger.info("Retrying in 5 seconds..")
+            await asyncio.sleep(5)
+            await setup(attempt + 1)
 
 
 async def setup_complete() -> None:
@@ -55,8 +83,10 @@ async def setup_complete() -> None:
     logger.info("Subscribed entities: %s", subscribed_entities)
     if subscribed_entities is not None and isinstance(subscribed_entities, list):
         homeassistant.subscribed_entities = subscribed_entities
-    gui = GUI(settings, homeassistant)
+
+    gui = GUI(_callback, settings, homeassistant)
     gui.setup()
+    logger.info("GUI setup complete")
 
 
 @app.command(name="main", short_help="Run main application")
@@ -76,7 +106,6 @@ if __name__ == "__main__":
     LOG_LEVEL = str(settings.get(SETTING_LOG_LEVEL))
     setup_logger(LOG_LEVEL, "homeassistantdesktop")
     logging.getLogger("zeroconf").setLevel(logging.ERROR)
-    asyncio.new_event_loop()
     homeassistant = HomeAssistant(database, settings, setup_complete)
     logger = logging.getLogger(f"homeassistantdesktop.{__name__}")
 

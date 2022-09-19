@@ -59,11 +59,13 @@ class GUITray(Base, QtWidgets.QSystemTrayIcon):
     @QtCore.Slot()
     def _on_menu_exit(self) -> None:
         """Menu Exit"""
+        self._logger.info("Menu Exit")
         self._callback("exit")
 
     @QtCore.Slot()
     def _on_menu_settings(self) -> None:
         """Menu Settings"""
+        self._logger.info("Menu Settings")
         self._callback("settings")
 
     def update(self) -> None:
