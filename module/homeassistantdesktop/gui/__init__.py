@@ -111,7 +111,7 @@ class GUI(Base):
         """Cleanup"""
         self._logger.info("Cleanup GUI")
         if self._application is not None:
-            self._application.quit()
+            self._application.exit()
             self._application = None
         if self._thread is not None:
             self._stopping = True

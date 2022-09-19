@@ -33,6 +33,7 @@ async def setup(attempt: int = 1) -> None:
         sys.exit(1)
     try:
         await homeassistant.connect()
+        attempt = 1
         await homeassistant.listen()
     except ConnectionClosedException as exception:
         logger.error("Connection closed: %s", exception)
