@@ -1,5 +1,4 @@
 """Home Assistant Desktop: GUI"""
-import sys
 from threading import Event, Thread
 from typing import Optional
 
@@ -100,10 +99,11 @@ class GUI(Base):
         """Tray Callback"""
         self._logger.debug("Tray Callback: %s", command)
         if command == "exit":
-            self._logger.info("Exit application")
             self.cleanup()
-            sys.exit(0)
+            self._logger.info("Exit application")
+            exit(0)
         elif command == "settings":
+            self._logger.info("Show settings")
             self.gui_settings = GUISettings(self._settings)
             self.gui_settings.resize(1080, 680)
             self.gui_settings.show()

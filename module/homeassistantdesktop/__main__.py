@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import asyncio
 import logging
-import sys
 
 import typer
 
@@ -30,7 +29,7 @@ async def setup(attempt: int = 1) -> None:
     logger.info("Setup: %s", attempt)
     if attempt > 3:
         logger.error("Exceeded 3 attempts to setup application. Exiting now..")
-        sys.exit(1)
+        exit(1)
     try:
         await homeassistant.connect()
         attempt = 1
