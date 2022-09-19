@@ -77,6 +77,8 @@ class GUI(Base):
         self.gui_tray = GUITray(self._settings, self._tray_callback)
         self.gui_tray.show()
 
+        self._logger.info("GUI setup complete")
+
         sys.exit(self._application.exec())
 
     def _tray_callback(

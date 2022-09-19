@@ -1,6 +1,6 @@
 """Home Assistant Desktop: GUI - Tray"""
+from collections.abc import Callable
 import os
-from typing import Callable
 
 from PySide6 import QtCore, QtGui, QtWidgets
 
