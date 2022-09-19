@@ -67,6 +67,7 @@ good-names = [
 # wrong-import-order - isort guards this
 disable = [
     "abstract-method",
+    "c-extension-no-member",
     "consider-alternative-union-syntax",
     "cyclic-import",
     "duplicate-code",

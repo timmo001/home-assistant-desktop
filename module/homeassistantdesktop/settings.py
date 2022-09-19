@@ -16,6 +16,7 @@ from .const import (
     SETTING_HOME_ASSISTANT_HOST,
     SETTING_HOME_ASSISTANT_PORT,
     SETTING_HOME_ASSISTANT_SECURE,
+    SETTING_HOME_ASSISTANT_SUBSCRIBED_ENTITIES,
     SETTING_LOG_LEVEL,
 )
 from .database import Database
@@ -61,6 +62,8 @@ class Settings(Base):
             self.set(SETTING_HOME_ASSISTANT_PORT, "8123")
         if self.get(SETTING_HOME_ASSISTANT_SECURE) is None:
             self.set(SETTING_HOME_ASSISTANT_SECURE, str(False))
+        if self.get(SETTING_HOME_ASSISTANT_SUBSCRIBED_ENTITIES) is None:
+            self.set(SETTING_HOME_ASSISTANT_SUBSCRIBED_ENTITIES, "[]")
 
     def get_all(self) -> list[DatabaseData]:
         """Get settings"""
@@ -73,12 +76,16 @@ class Settings(Base):
     def get(
         self,
         key: str,
+        default: Union[bool, float, int, str, list[Any], dict[str, Any], None] = None,
     ) -> Union[bool, float, int, str, list[Any], dict[str, Any], None]:
         """Get setting"""
         record = self._database.get_data_item_by_key(DatabaseSettings, key)
         if record is None or record.value is None:
             return None
-        return convert_string_to_correct_type(record.value)
+        result = convert_string_to_correct_type(record.value)
+        if result is None:
+            return default
+        return result
 
     def get_secret(
         self,
