@@ -124,7 +124,8 @@ class HomeAssistant(Base):
                     self._logger.debug("Updated Home Assistant state: %s", entity_id)
                     if (
                         self.subscribed_entities is not None
-                        and entity_id in self.subscribed_entities
+                        and entity_id
+                        in self.subscribed_entities  # pylint: disable=unsupported-membership-test
                     ):
                         self._logger.debug(
                             "Updated subscribed Home Assistant state: %s", entity_id

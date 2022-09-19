@@ -1,5 +1,5 @@
 """Home Assistant Desktop: GUI - Settings"""
-from typing import Callable
+from collections.abc import Callable
 
 from PySide6 import QtCore, QtGui, QtWidgets
 

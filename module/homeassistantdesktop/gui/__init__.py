@@ -1,6 +1,7 @@
 """Home Assistant Desktop: GUI"""
+from collections.abc import Callable
 from threading import Event, Thread
-from typing import Callable, Optional
+from typing import Optional
 
 from PySide6 import QtWidgets
 from qt_material import apply_stylesheet

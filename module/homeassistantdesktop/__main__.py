@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import sys
 
 import typer
 
@@ -21,7 +22,7 @@ from .settings import Settings
 
 app = typer.Typer()
 
-closing = False
+CLOSING = False
 loop = asyncio.new_event_loop()
 
 database = Database()
@@ -30,17 +31,17 @@ settings = Settings(database)
 
 def _callback(command: str) -> None:
     """Callback"""
+    global CLOSING  # pylint: disable=global-statement
     logger.info("Callback: %s", command)
     if command == "exit":
         logger.info("Exit application")
-        global closing
-        closing = True
+        CLOSING = True
         asyncio.run(homeassistant.disconnect())
         if loop is not None and loop.is_running():
             for pending_task in asyncio.all_tasks():
                 pending_task.cancel()
             loop.stop()
-        exit(0)
+        sys.exit(0)
     elif command == "settings_updated":
         logger.info("Settings updated")
         asyncio.run(setup())
@@ -48,27 +49,27 @@ def _callback(command: str) -> None:
 
 async def setup(attempt: int = 1) -> None:
     """Setup"""
-    global closing
-    if closing:
+    global CLOSING  # pylint: disable=global-statement
+    if CLOSING:
         return
 
     logger.info("Setup: %s", attempt)
     if attempt > 3:
         logger.error("Exceeded 3 attempts to setup application. Exiting now..")
-        exit(1)
+        sys.exit(1)
     try:
         await homeassistant.connect()
         attempt = 1
         await homeassistant.listen()
     except ConnectionClosedException as exception:
         logger.error("Connection closed: %s", exception)
-        if not closing:
+        if not CLOSING:
             logger.info("Retrying in 5 seconds..")
             await asyncio.sleep(5)
             await setup(attempt + 1)
     except ConnectionErrorException as exception:
         logger.error("Connection error: %s", exception)
-        if not closing:
+        if not CLOSING:
             logger.info("Retrying in 5 seconds..")
             await asyncio.sleep(5)
             await setup(attempt + 1)
