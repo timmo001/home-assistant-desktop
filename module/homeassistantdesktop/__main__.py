@@ -38,7 +38,6 @@ class Main(Base):
         self._cleaning = False
         self._homeassistant = HomeAssistant(database, settings, self.setup_complete)
         self._gui = GUI(self._callback, settings, self._homeassistant)
-        self._loop = main_loop
 
     def _callback(
         self,
@@ -54,10 +53,11 @@ class Main(Base):
 
     def exit(self) -> None:
         """Exit"""
-        self._logger.info("Exit application")
         self.cleanup()
-        if self._loop is not None and self._loop.is_running():
-            self._loop.stop()
+        self._logger.info("Stop main loop")
+        if main_loop is not None and main_loop.is_running():
+            main_loop.stop()
+        self._logger.info("Exit application")
         sys.exit(0)
 
     def cleanup(self) -> None:
@@ -66,10 +66,14 @@ class Main(Base):
         self._cleaning = True
         self._gui.cleanup()
         self._logger.info("Disconnect from Home Assistant")
-        loop = self._loop
-        if loop is None or not loop.is_running():
-            loop = asyncio.new_event_loop()
-        loop.create_task(self._homeassistant.disconnect())
+        # loop = main_loop
+        # if loop is None or not loop.is_running():
+        #     loop = asyncio.new_event_loop()
+        # loop.create_task(self._homeassistant.disconnect())
+        main_loop.create_task(self._homeassistant.disconnect())
+        # self._logger.info("Cancel tasks")
+        # for task in asyncio.all_tasks():
+        #     task.cancel()
         self._cleaning = False
 
     def setup(self) -> None:
@@ -80,11 +84,11 @@ class Main(Base):
         self._logger.info("Setup")
 
         self._gui.setup()
-        # loop = self._loop
+        # loop = main_loop
         # if loop is None or not loop.is_running():
         #     loop = asyncio.new_event_loop()
         # loop.create_task(self.setup_home_assistant())
-        self._loop.create_task(self.setup_home_assistant())
+        main_loop.create_task(self.setup_home_assistant())
 
     async def setup_home_assistant(
         self,
