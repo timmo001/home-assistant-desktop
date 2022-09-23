@@ -66,14 +66,7 @@ class Main(Base):
         self._cleaning = True
         self._gui.cleanup()
         self._logger.info("Disconnect from Home Assistant")
-        # loop = main_loop
-        # if loop is None or not loop.is_running():
-        #     loop = asyncio.new_event_loop()
-        # loop.create_task(self._homeassistant.disconnect())
-        main_loop.create_task(self._homeassistant.disconnect())
-        # self._logger.info("Cancel tasks")
-        # for task in asyncio.all_tasks():
-        #     task.cancel()
+        asyncio.run_coroutine_threadsafe(self._homeassistant.disconnect(), main_loop)
         self._cleaning = False
 
     def setup(self) -> None:
@@ -84,11 +77,7 @@ class Main(Base):
         self._logger.info("Setup")
 
         self._gui.setup()
-        # loop = main_loop
-        # if loop is None or not loop.is_running():
-        #     loop = asyncio.new_event_loop()
-        # loop.create_task(self.setup_home_assistant())
-        main_loop.create_task(self.setup_home_assistant())
+        asyncio.run_coroutine_threadsafe(self.setup_home_assistant(), main_loop)
 
     async def setup_home_assistant(
         self,
