@@ -168,6 +168,12 @@ class HomeAssistant(Base):
 
     async def check_data(self) -> None:
         """Check required data is available"""
+        self._logger.info(
+            "Checking Home Assistant data is avaliable..\nconfig: %s\nservices: %s\nstates: %s",
+            self.config is not None,
+            self.services is not None,
+            self.states is not None,
+        )
         if (
             self.config is not None
             and self.services is not None
@@ -183,10 +189,13 @@ class HomeAssistant(Base):
                 await self._websocket_client.connect()
         except AuthenticationException as exception:
             self._logger.error("Authentication failed: %s", exception)
+            raise exception
         except ConnectionErrorException as exception:
             self._logger.error("Could not connect to WebSocket: %s", exception)
+            raise exception
         except asyncio.TimeoutError as exception:
             self._logger.error("Connection timeout to WebSocket: %s", exception)
+            raise ConnectionErrorException from exception
         self._logger.info("Connected to Home Assistant")
 
     async def disconnect(self) -> None:
@@ -200,8 +209,10 @@ class HomeAssistant(Base):
             await self._websocket_client.listen(self._handle_message)
         except AuthenticationException as exception:
             self._logger.error("Authentication failed: %s", exception)
+            raise exception
         except ConnectionErrorException as exception:
             self._logger.error("Could not connect to WebSocket: %s", exception)
+            raise exception
 
         self._logger.info("Stopped listening for messages from Home Assistant")
 

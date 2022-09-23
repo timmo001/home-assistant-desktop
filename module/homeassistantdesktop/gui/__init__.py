@@ -1,6 +1,5 @@
 """Home Assistant Desktop: GUI"""
 from collections.abc import Callable
-from threading import Event, Thread
 from typing import Optional
 from webbrowser import open_new_tab
 
@@ -10,30 +9,9 @@ from qt_material import apply_stylesheet
 from ..base import Base
 from ..homeassistant import HomeAssistant
 from ..settings import Settings
+from ..stoppable_thread import StoppableThread
 from .settings import GUISettings
 from .tray import GUITray
-
-
-class StoppableThread(Thread):
-    """Thread class with a stop() method. The thread itself has to check
-    regularly for the stopped() condition."""
-
-    def __init__(
-        self,
-        *args,
-        **kwargs,
-    ) -> None:
-        """Initialize the thread."""
-        super().__init__(*args, **kwargs)
-        self._stop_event = Event()
-
-    def stop(self) -> None:
-        """Stop the thread."""
-        self._stop_event.set()
-
-    def stopped(self) -> bool:
-        """Return if the thread is stopped."""
-        return self._stop_event.is_set()
 
 
 class GUI(Base):
@@ -57,13 +35,13 @@ class GUI(Base):
         self.gui_settings: Optional[GUISettings] = None
         self.gui_tray: Optional[GUITray] = None
 
-    def _setup(self) -> int:
+    def _setup(self) -> None:
         """Setup"""
         self._logger.info("Setup GUI")
 
         if self._application is not None:
             self._logger.warning("GUI already setup")
-            return 0
+            return
 
         self._application = QtWidgets.QApplication()
         apply_stylesheet(
@@ -94,14 +72,14 @@ class GUI(Base):
 
         self._logger.info("GUI setup complete")
 
-        return self._application.exec()
+        self._application.exec()
 
     def _tray_callback(
         self,
         command: str,
     ) -> None:
         """Tray Callback"""
-        self._logger.debug("Tray Callback: %s", command)
+        self._logger.info("Tray callback: %s", command)
         if command == "exit":
             self.cleanup()
             self._callback(command)
@@ -130,8 +108,8 @@ class GUI(Base):
             self.gui_tray = None
         if self._application is not None:
             self._application.exit()
-            del self._application
-            self._application = None
+        #     del self._application
+        #     self._application = None
         if self._thread is not None:
             self._thread.stop()
             self._thread = None
@@ -139,9 +117,12 @@ class GUI(Base):
 
     def setup(self) -> None:
         """Start the GUI"""
-        if self._application is not None:
-            self.cleanup()
 
-        self._thread = StoppableThread(target=self._setup)
+        self._thread = StoppableThread(
+            name="GUI",
+            target=self._setup,
+        )
         self._thread.start()
         self._stopping = False
+
+        # self._setup()

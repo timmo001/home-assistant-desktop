@@ -9,6 +9,7 @@ import typer
 
 from ._version import __version__
 from .autostart import autostart_disable, autostart_enable
+from .base import Base
 from .const import (
     MESSAGE_STATE_CHANGED,
     SETTING_AUTOSTART,
@@ -16,87 +17,109 @@ from .const import (
     SETTING_LOG_LEVEL,
 )
 from .database import Database
-from .exceptions import ConnectionClosedException, ConnectionErrorException
+from .exceptions import (
+    AuthenticationException,
+    ConnectionClosedException,
+    ConnectionErrorException,
+)
 from .gui import GUI
 from .homeassistant import HomeAssistant
 from .logger import setup_logger
 from .settings import Settings
 from .shortcut import create_shortcuts
 
-CLEANING = False
+
+class Main(Base):
+    """Main"""
+
+    def __init__(self) -> None:
+        """Initialize"""
+        super().__init__()
+        self._cleaning = False
+        self._homeassistant = HomeAssistant(database, settings, self.setup_complete)
+        self._gui = GUI(self._callback, settings, self._homeassistant)
+
+    def _callback(
+        self,
+        command: str,
+    ) -> None:
+        """Callback"""
+        self._logger.info("Callback: %s", command)
+        if command == "exit":
+            exit()
+        elif command == "settings_updated":
+            self._logger.info("Settings updated")
+            self.restart()
+
+    def exit(self) -> None:
+        """Exit"""
+        self._logger.info("Exit application")
+        self.cleanup()
+        if loop is not None and loop.is_running():
+            loop.stop()
+        sys.exit(0)
+
+    def cleanup(self) -> None:
+        """Cleanup"""
+        self._logger.info("Cleanup")
+        self._cleaning = True
+        self._gui.cleanup()
+        loop.create_task(self._homeassistant.disconnect())
+        self._cleaning = False
+
+    def restart(self) -> None:
+        """Restart"""
+        self._logger.info("Restart application")
+        self.cleanup()
+        self.setup()
+
+    def setup(self) -> None:
+        """Setup"""
+        if self._cleaning:
+            return
+
+        self._logger.info("Setup")
+
+        self._gui.setup()
+        loop.create_task(self.setup_home_assistant())
+
+    async def setup_home_assistant(
+        self,
+        attempt: int = 1,
+    ) -> None:
+        """Setup Home Assistant"""
+        self._logger.info("Setup Home Assistant: %s", attempt)
+        if attempt > 3:
+            self._logger.error(
+                "Exceeded 3 attempts to setup application. Exiting now.."
+            )
+            sys.exit(1)
+
+        try:
+            await self._homeassistant.connect()
+            attempt = 1
+            await self._homeassistant.listen()
+        except ConnectionClosedException as exception:
+            self._logger.error("Home Assistant connection closed: %s", exception)
+            if not self._cleaning:
+                self._logger.info("Retrying in 5 seconds..")
+                await asyncio.sleep(5)
+                await self.setup_home_assistant(attempt + 1)
+        except (AuthenticationException, ConnectionErrorException) as exception:
+            self._logger.error("Home Assistant connection error: %s", exception)
+
+    async def setup_complete(self) -> None:
+        """Setup complete"""
+        self._logger.info("Setup complete")
+        await self._homeassistant.subscribe_events(MESSAGE_STATE_CHANGED)
+
+        subscribed_entities = settings.get(SETTING_HOME_ASSISTANT_SUBSCRIBED_ENTITIES)
+        self._logger.info("Subscribed entities: %s", subscribed_entities)
+        if subscribed_entities is not None and isinstance(subscribed_entities, list):
+            self._homeassistant.subscribed_entities = subscribed_entities
+
 
 app = typer.Typer()
-
-
-def _callback(command: str) -> None:
-    """Callback"""
-    logger.info("Callback: %s", command)
-    if command == "exit":
-        exit()
-    elif command == "settings_updated":
-        logger.info("Settings updated")
-        cleanup()
-        loop.create_task(setup())
-
-
-def exit() -> None:
-    """Exit"""
-    logger.info("Exit application")
-    cleanup()
-    if loop is not None and loop.is_running():
-        loop.stop()
-    sys.exit(0)
-
-
-def cleanup() -> None:
-    """Cleanup"""
-    logger.info("Cleanup")
-    global CLEANING  # pylint: disable=global-statement
-    CLEANING = True
-    gui.cleanup()
-    loop.create_task(homeassistant.disconnect())
-    CLEANING = False
-
-
-async def setup(attempt: int = 1) -> None:
-    """Setup"""
-    if CLEANING:
-        return
-
-    logger.info("Setup: %s", attempt)
-    if attempt > 3:
-        logger.error("Exceeded 3 attempts to setup application. Exiting now..")
-        sys.exit(1)
-
-    try:
-        await homeassistant.connect()
-        attempt = 1
-        await homeassistant.listen()
-    except ConnectionClosedException as exception:
-        logger.error("Connection closed: %s", exception)
-        if not CLEANING:
-            logger.info("Retrying in 5 seconds..")
-            await asyncio.sleep(5)
-            await setup(attempt + 1)
-    except ConnectionErrorException as exception:
-        logger.error("Connection error: %s", exception)
-        if not CLEANING:
-            logger.info("Retrying in 5 seconds..")
-            await asyncio.sleep(5)
-            await setup(attempt + 1)
-
-
-async def setup_complete() -> None:
-    """Setup complete"""
-    logger.info("Setup complete")
-    await homeassistant.subscribe_events(MESSAGE_STATE_CHANGED)
-
-    subscribed_entities = settings.get(SETTING_HOME_ASSISTANT_SUBSCRIBED_ENTITIES)
-    logger.info("Subscribed entities: %s", subscribed_entities)
-    if subscribed_entities is not None and isinstance(subscribed_entities, list):
-        homeassistant.subscribed_entities = subscribed_entities
-
-    gui.setup()
 
 
 @app.command(name="main", short_help="Run main application")
@@ -113,7 +136,7 @@ def main() -> None:
 
     create_shortcuts()
 
-    asyncio.ensure_future(setup())
+    main_app.setup()
     loop.run_forever()
 
 
@@ -129,12 +152,10 @@ if __name__ == "__main__":
 
     database = Database()
     settings = Settings(database)
+    main_app = Main()
 
     LOG_LEVEL = str(settings.get(SETTING_LOG_LEVEL))
     setup_logger(LOG_LEVEL, "homeassistantdesktop")
     logger = logging.getLogger(f"homeassistantdesktop.{__name__}")
-
-    homeassistant = HomeAssistant(database, settings, setup_complete)
-    gui = GUI(_callback, settings, homeassistant)
 
     app()
