@@ -73,13 +73,7 @@ class GUI(Base):
 
         self._logger.info("GUI setup complete")
 
-        asyncio.ensure_future(self._application.exec())  # type: ignore
-
-        loop = asyncio.get_running_loop()
-        if loop is None or not loop.is_running():
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            loop.run_forever()
+        self._application.exec()
 
     def _tray_callback(
         self,
@@ -130,5 +124,3 @@ class GUI(Base):
         )
         self._thread.start()
         self._stopping = False
-
-        # self._setup()
