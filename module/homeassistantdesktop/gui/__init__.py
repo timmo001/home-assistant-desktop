@@ -130,6 +130,7 @@ class GUI(Base):
             self.gui_tray = None
         if self._application is not None:
             self._application.exit()
+            del self._application
             self._application = None
         if self._thread is not None:
             self._thread.stop()

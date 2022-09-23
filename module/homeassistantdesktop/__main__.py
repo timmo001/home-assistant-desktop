@@ -32,13 +32,20 @@ def _callback(command: str) -> None:
     """Callback"""
     logger.info("Callback: %s", command)
     if command == "exit":
-        logger.info("Exit application")
-        cleanup()
-        sys.exit(0)
+        exit()
     elif command == "settings_updated":
         logger.info("Settings updated")
         cleanup()
         loop.create_task(setup())
+
+
+def exit() -> None:
+    """Exit"""
+    logger.info("Exit application")
+    cleanup()
+    if loop is not None and loop.is_running():
+        loop.stop()
+    sys.exit(0)
 
 
 def cleanup() -> None:
@@ -47,10 +54,6 @@ def cleanup() -> None:
     global CLEANING  # pylint: disable=global-statement
     CLEANING = True
     gui.cleanup()
-    if loop is not None and loop.is_running():
-        # for pending_task in asyncio.all_tasks():
-        #     pending_task.cancel()
-        loop.stop()
     loop.create_task(homeassistant.disconnect())
     CLEANING = False
 
