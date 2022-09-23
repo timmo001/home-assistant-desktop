@@ -1,4 +1,5 @@
 """Home Assistant Desktop: GUI"""
+import asyncio
 from collections.abc import Callable
 from typing import Optional
 from webbrowser import open_new_tab
@@ -37,11 +38,11 @@ class GUI(Base):
 
     def _setup(self) -> None:
         """Setup"""
-        self._logger.info("Setup GUI")
-
         if self._application is not None:
             self._logger.warning("GUI already setup")
             return
+
+        self._logger.info("Setup GUI")
 
         self._application = QtWidgets.QApplication()
         apply_stylesheet(
@@ -72,7 +73,13 @@ class GUI(Base):
 
         self._logger.info("GUI setup complete")
 
-        self._application.exec()
+        asyncio.ensure_future(self._application.exec())  # type: ignore
+
+        loop = asyncio.get_running_loop()
+        if loop is None or not loop.is_running():
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            loop.run_forever()
 
     def _tray_callback(
         self,
@@ -108,8 +115,7 @@ class GUI(Base):
             self.gui_tray = None
         if self._application is not None:
             self._application.exit()
-        #     del self._application
-        #     self._application = None
+            # self._application = None
         if self._thread is not None:
             self._thread.stop()
             self._thread = None

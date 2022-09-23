@@ -38,6 +38,7 @@ class Main(Base):
         self._cleaning = False
         self._homeassistant = HomeAssistant(database, settings, self.setup_complete)
         self._gui = GUI(self._callback, settings, self._homeassistant)
+        self._loop = main_loop
 
     def _callback(
         self,
@@ -55,8 +56,8 @@ class Main(Base):
         """Exit"""
         self._logger.info("Exit application")
         self.cleanup()
-        if loop is not None and loop.is_running():
-            loop.stop()
+        if self._loop is not None and self._loop.is_running():
+            self._loop.stop()
         sys.exit(0)
 
     def cleanup(self) -> None:
@@ -64,6 +65,10 @@ class Main(Base):
         self._logger.info("Cleanup")
         self._cleaning = True
         self._gui.cleanup()
+        self._logger.info("Disconnect from Home Assistant")
+        loop = self._loop
+        if loop is None or not loop.is_running():
+            loop = asyncio.new_event_loop()
         loop.create_task(self._homeassistant.disconnect())
         self._cleaning = False
 
@@ -75,7 +80,11 @@ class Main(Base):
         self._logger.info("Setup")
 
         self._gui.setup()
-        loop.create_task(self.setup_home_assistant())
+        # loop = self._loop
+        # if loop is None or not loop.is_running():
+        #     loop = asyncio.new_event_loop()
+        # loop.create_task(self.setup_home_assistant())
+        self._loop.create_task(self.setup_home_assistant())
 
     async def setup_home_assistant(
         self,
@@ -131,7 +140,7 @@ def main() -> None:
     create_shortcuts()
 
     main_app.setup()
-    loop.run_forever()
+    main_loop.run_forever()
 
 
 @app.command(name="version", short_help="Module Version")
@@ -141,8 +150,8 @@ def version() -> None:
 
 
 if __name__ == "__main__":
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
+    main_loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(main_loop)
 
     database = Database()
     settings = Settings(database)
