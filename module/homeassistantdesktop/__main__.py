@@ -23,36 +23,41 @@ from .logger import setup_logger
 from .settings import Settings
 from .shortcut import create_shortcuts
 
+CLEANING = False
+
 app = typer.Typer()
-
-CLOSING = False
-loop = asyncio.new_event_loop()
-
-database = Database()
-settings = Settings(database)
 
 
 def _callback(command: str) -> None:
     """Callback"""
-    global CLOSING  # pylint: disable=global-statement
     logger.info("Callback: %s", command)
     if command == "exit":
         logger.info("Exit application")
-        CLOSING = True
-        asyncio.run(homeassistant.disconnect())
-        if loop is not None and loop.is_running():
-            for pending_task in asyncio.all_tasks():
-                pending_task.cancel()
-            loop.stop()
+        cleanup()
         sys.exit(0)
     elif command == "settings_updated":
         logger.info("Settings updated")
-        asyncio.run(setup())
+        cleanup()
+        loop.create_task(setup())
+
+
+def cleanup() -> None:
+    """Cleanup"""
+    logger.info("Cleanup")
+    global CLEANING  # pylint: disable=global-statement
+    CLEANING = True
+    gui.cleanup()
+    if loop is not None and loop.is_running():
+        # for pending_task in asyncio.all_tasks():
+        #     pending_task.cancel()
+        loop.stop()
+    loop.create_task(homeassistant.disconnect())
+    CLEANING = False
 
 
 async def setup(attempt: int = 1) -> None:
     """Setup"""
-    if CLOSING:
+    if CLEANING:
         return
 
     logger.info("Setup: %s", attempt)
@@ -66,13 +71,13 @@ async def setup(attempt: int = 1) -> None:
         await homeassistant.listen()
     except ConnectionClosedException as exception:
         logger.error("Connection closed: %s", exception)
-        if not CLOSING:
+        if not CLEANING:
             logger.info("Retrying in 5 seconds..")
             await asyncio.sleep(5)
             await setup(attempt + 1)
     except ConnectionErrorException as exception:
         logger.error("Connection error: %s", exception)
-        if not CLOSING:
+        if not CLEANING:
             logger.info("Retrying in 5 seconds..")
             await asyncio.sleep(5)
             await setup(attempt + 1)
@@ -88,7 +93,6 @@ async def setup_complete() -> None:
     if subscribed_entities is not None and isinstance(subscribed_entities, list):
         homeassistant.subscribed_entities = subscribed_entities
 
-    gui = GUI(_callback, settings, homeassistant)
     gui.setup()
 
 
@@ -106,7 +110,8 @@ def main() -> None:
 
     create_shortcuts()
 
-    asyncio.run(setup())
+    asyncio.ensure_future(setup())
+    loop.run_forever()
 
 
 @app.command(name="version", short_help="Module Version")
@@ -116,10 +121,17 @@ def version() -> None:
 
 
 if __name__ == "__main__":
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
+    database = Database()
+    settings = Settings(database)
+
     LOG_LEVEL = str(settings.get(SETTING_LOG_LEVEL))
     setup_logger(LOG_LEVEL, "homeassistantdesktop")
-    logging.getLogger("zeroconf").setLevel(logging.ERROR)
-    homeassistant = HomeAssistant(database, settings, setup_complete)
     logger = logging.getLogger(f"homeassistantdesktop.{__name__}")
+
+    homeassistant = HomeAssistant(database, settings, setup_complete)
+    gui = GUI(_callback, settings, homeassistant)
 
     app()
