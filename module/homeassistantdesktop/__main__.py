@@ -46,10 +46,10 @@ class Main(Base):
         """Callback"""
         self._logger.info("Callback: %s", command)
         if command == "exit":
-            exit()
+            self.exit()
         elif command == "settings_updated":
             self._logger.info("Settings updated")
-            self.restart()
+            self.setup()
 
     def exit(self) -> None:
         """Exit"""
@@ -66,12 +66,6 @@ class Main(Base):
         self._gui.cleanup()
         loop.create_task(self._homeassistant.disconnect())
         self._cleaning = False
-
-    def restart(self) -> None:
-        """Restart"""
-        self._logger.info("Restart application")
-        self.cleanup()
-        self.setup()
 
     def setup(self) -> None:
         """Setup"""
