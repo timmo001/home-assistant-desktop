@@ -4,7 +4,7 @@ colorlog==6.7.0
 cryptography==38.0.1
 incremental==21.3.0
 pydantic==1.10.2
-pyside6==6.3.2
+pyside6==6.4.0
 qt-material==2.12
 sqlmodel==0.0.8
 typer==0.6.1
