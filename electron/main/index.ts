@@ -12,7 +12,7 @@ process.env.DIST_ELECTRON = join(__dirname, "..");
 process.env.DIST = join(process.env.DIST_ELECTRON, "../dist");
 process.env.PUBLIC = app.isPackaged
   ? process.env.DIST
-  : join(process.env.DIST_ELECTRON, "../public");
+  : join(process.env.DIST_ELECTRON, "../../public");
 
 import { app, BrowserWindow, ipcMain, Menu, shell, Tray } from "electron";
 import { release } from "os";
@@ -38,9 +38,10 @@ const url = process.env.VITE_DEV_SERVER_URL;
 const indexHtml = join(process.env.DIST, "index.html");
 
 async function createTray(): Promise<void> {
-  const path = join(process.env.PUBLIC, "favicon.svg");
-  // const path = join(__dirname, "../assets/favicon.svg");
-  // const image = nativeImage.createFromPath(path);
+  const path = join(
+    process.env.PUBLIC,
+    `favicon.${process.platform === "win32" ? "ico" : "png"}`
+  );
   console.log("Logo Path:", path);
   tray = new Tray(path);
   tray.setToolTip("Home Assistant Desktop");
@@ -63,12 +64,18 @@ async function createTray(): Promise<void> {
       },
     ])
   );
+  tray.on("click", () => {
+    tray.popUpContextMenu();
+  });
 }
 
 async function createSettingsWindow(): Promise<void> {
   win = new BrowserWindow({
     title: "Settings",
-    icon: join(process.env.PUBLIC, "favicon.ico"),
+    icon: join(
+      process.env.PUBLIC,
+      `favicon.${process.platform === "win32" ? "ico" : "png"}`
+    ),
     webPreferences: {
       preload,
       contextIsolation: false,
@@ -99,10 +106,10 @@ async function createSettingsWindow(): Promise<void> {
 
 app.whenReady().then(createTray);
 
-// app.on("window-all-closed", () => {
-//   win = null;
-//   if (process.platform !== "darwin") app.quit();
-// });
+app.on("window-all-closed", () => {
+  win = null;
+  // if (process.platform !== "darwin") app.quit();
+});
 
 app.on("second-instance", () => {
   if (win) {
