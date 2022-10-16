@@ -32,38 +32,38 @@ export const settingsMap: { [key: string]: SettingDescription } = {
     description: "Automatically start the application on startup",
     icon: mdiRocketLaunch,
   },
-  log_level: {
+  logLevel: {
     section: "general",
     name: "Log Level",
     description: "Log level for the application",
     icon: mdiTextBoxOutline,
   },
-  home_assistant_secure: {
+  homeAssistantSecure: {
     section: "homeAssistant",
     name: "SSL",
     description: "Use SSL to connect to Home Assistant",
     icon: mdiSecurity,
   },
-  home_assistant_host: {
+  homeAssistantHost: {
     section: "homeAssistant",
     name: "Host",
     description: "The host of the Home Assistant instance",
     icon: mdiWeb,
   },
-  home_assistant_port: {
+  homeAssistantPort: {
     section: "homeAssistant",
     name: "Port",
     description: "The port of the Home Assistant instance",
     icon: mdiProtocol,
     minimum: 1,
   },
-  home_assistant_token: {
+  homeAssistantToken: {
     section: "homeAssistant",
     name: "Token",
     description: "The long-lived access token for Home Assistant",
     icon: mdiFormTextboxPassword,
   },
-  home_assistant_subscribed_entites: {
+  homeAssistantSubscribedEntites: {
     section: "homeAssistant",
     name: "Subscribed Entities",
     description: "The entities to subscribe to",

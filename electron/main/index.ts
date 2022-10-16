@@ -17,6 +17,7 @@ process.env.PUBLIC = app.isPackaged
 import { app, BrowserWindow, shell, ipcMain } from "electron";
 import { release } from "os";
 import { join } from "path";
+import settings from "electron-settings";
 
 // Disable GPU Acceleration for Windows 7
 if (release().startsWith("6.1")) app.disableHardwareAcceleration();
@@ -41,8 +42,8 @@ async function createWindow() {
     icon: join(process.env.PUBLIC, "favicon.svg"),
     webPreferences: {
       preload,
-      nodeIntegration: true,
       contextIsolation: false,
+      nodeIntegration: true,
     },
     width: 1920,
     height: 1080,
@@ -92,7 +93,7 @@ app.on("activate", () => {
 });
 
 // new window example arg: new windows url
-ipcMain.handle("open-win", (event, arg) => {
+ipcMain.handle("open-win", (_event, arg) => {
   const childWindow = new BrowserWindow({
     webPreferences: {
       preload,
@@ -106,3 +107,41 @@ ipcMain.handle("open-win", (event, arg) => {
     // childWindow.webContents.openDevTools({ mode: "undocked", activate: true })
   }
 });
+
+// ----------------------------------------
+// Settings
+// ----------------------------------------
+const defaultSettings = {
+  autostart: false,
+  logLevel: "INFO",
+  homeAssistantSecure: false,
+  homeAssistantHost: "homeassistant.local",
+  homeAssistantPort: 8123,
+  homeAssistantToken: "",
+  homeAssistantSubscribedEntites: [],
+};
+
+ipcMain.handle(
+  "SETTINGS",
+  async (
+    _event,
+    args: { type: string; key?: string; keys?: string[]; value: any }
+  ) => {
+    console.log("SETTINGS:", args);
+    switch (args.type) {
+      case "GET":
+        if (args.key) return await settings.get(args.key);
+        if (args.keys) {
+          let result = {};
+          for (const key of args.keys) {
+            result[key] = (await settings.get(key)) || defaultSettings[key];
+          }
+          return result;
+        }
+      case "SET":
+        if (args.key) return await settings.set(args.key, args.value);
+      default:
+        return null;
+    }
+  }
+);

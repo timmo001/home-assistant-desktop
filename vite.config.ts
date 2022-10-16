@@ -1,9 +1,11 @@
-import { rmSync } from "fs";
-import path from "path";
 import { defineConfig } from "vite";
+import { customStart } from "vite-electron-plugin/plugin";
+import { rmSync } from "fs";
 import react from "@vitejs/plugin-react";
 import electron from "vite-electron-plugin";
-import { customStart } from "vite-electron-plugin/plugin";
+import path from "path";
+import renderer from "vite-plugin-electron-renderer";
+
 import pkg from "./package.json";
 
 rmSync(path.join(__dirname, "dist-electron"), { recursive: true, force: true });
@@ -36,6 +38,7 @@ export default defineConfig({
           ]
         : undefined,
     }),
+    renderer(),
   ],
   server: process.env.VSCODE_DEBUG
     ? (() => {

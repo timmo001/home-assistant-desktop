@@ -26,10 +26,10 @@ import ItemList from "./ItemList";
 interface ItemProps {
   keyIn: string;
   valueIn: SettingsValue;
-  onChanged: (key: string, value: SettingsValue) => void;
+  onUpdate: (key: string, value: SettingsValue) => Promise<void>;
 }
 
-function Item({ keyIn, valueIn, onChanged }: ItemProps): ReactElement {
+function Item({ keyIn, valueIn, onUpdate }: ItemProps): ReactElement {
   const [open, setOpen] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [value, setValue] = useState<SettingsValue>(valueIn);
@@ -91,6 +91,8 @@ function Item({ keyIn, valueIn, onChanged }: ItemProps): ReactElement {
     return <ListItem>{children}</ListItem>;
   };
 
+  console.log("Item", keyIn, valueIn, value);
+
   return (
     <>
       <ItemContainer>
@@ -115,7 +117,7 @@ function Item({ keyIn, valueIn, onChanged }: ItemProps): ReactElement {
                   />
                 ) : typeof valueIn === "string" &&
                   typeof value === "string" &&
-                  keyIn === "log_level" ? (
+                  keyIn === "logLevel" ? (
                   <Autocomplete
                     id={keyIn}
                     options={["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]}
@@ -180,7 +182,7 @@ function Item({ keyIn, valueIn, onChanged }: ItemProps): ReactElement {
                   <IconButton
                     disabled={valueChanged === false}
                     onClick={() => {
-                      onChanged(keyIn, value);
+                      onUpdate(keyIn, value);
                     }}
                     sx={{ margin: theme.spacing(1) }}
                   >
@@ -205,9 +207,9 @@ function Item({ keyIn, valueIn, onChanged }: ItemProps): ReactElement {
             listIn={value as unknown as Array<NameValue>}
             open={open}
             setOpen={setOpen}
-            onChanged={(newValue: Array<NameValue>) => {
+            onUpdate={(newValue: Array<NameValue>) => {
               setValue(newValue);
-              onChanged(keyIn, newValue);
+              onUpdate(keyIn, newValue);
             }}
           />
         </>

@@ -21,15 +21,15 @@ import { Icon } from "@mdi/react";
 import { mdiMinusBoxOutline, mdiPlus } from "@mdi/js";
 import _ from "lodash";
 
-import { SettingDescription } from "./Settings";
 import { NameValue } from "@/types/nameValue";
+import { SettingDescription } from "@/types/settings";
 
 interface ItemListProps {
   setting: SettingDescription;
-  listIn: Array<NameValue>;
+  listIn: Array<string>;
   open: boolean;
   setOpen: (open: boolean) => void;
-  handleChanged: (list: Array<NameValue>) => void;
+  onUpdate: (list: Array<string>) => void;
 }
 
 function ItemList({
@@ -37,9 +37,9 @@ function ItemList({
   listIn,
   open,
   setOpen,
-  handleChanged,
+  onUpdate,
 }: ItemListProps): ReactElement {
-  const [list, setList] = useState<Array<NameValue>>([]);
+  const [list, setList] = useState<Array<string>>([]);
 
   const { name, description, icon }: SettingDescription = setting;
 
@@ -83,47 +83,22 @@ function ItemList({
               <Grid container alignItems="center">
                 <Grid
                   item
-                  xs={4}
+                  xs
                   sx={{
                     marginRight: theme.spacing(1),
                   }}
                 >
                   <TextField
-                    id="name"
-                    label="Name"
+                    id="entity"
+                    label="Entity"
                     fullWidth
                     variant="outlined"
-                    value={item.name}
+                    value={item}
                     onChange={(event) => {
-                      const newList: Array<NameValue> = _.cloneDeep(list);
-                      console.log("Update name:", key, newList, newList[key]);
-                      if (newList && newList[key]) {
-                        newList[key].name = event.target.value;
-                        setList(newList);
-                      }
-                    }}
-                  />
-                </Grid>
-                <Grid
-                  item
-                  xs
-                  sx={{
-                    marginLeft: theme.spacing(1),
-                  }}
-                >
-                  <TextField
-                    id="value"
-                    label="Value"
-                    fullWidth
-                    variant="outlined"
-                    value={item.value}
-                    onChange={(event) => {
-                      const newList = _.cloneDeep(list);
-                      console.log("Update value:", key, newList, newList[key]);
-                      if (newList && newList[key]) {
-                        newList[key].value = event.target.value;
-                        setList(newList);
-                      }
+                      const newList: Array<string> = _.cloneDeep(list);
+                      console.log("Update:", key, event.target.value);
+                      newList[key] = event.target.value;
+                      setList(newList);
                     }}
                   />
                 </Grid>
@@ -151,7 +126,7 @@ function ItemList({
           <ListItemButton
             onClick={() => {
               const newList = _.cloneDeep(list);
-              newList.push({ name: "", value: "" });
+              newList.push("");
               setList(newList);
             }}
           >
@@ -175,11 +150,7 @@ function ItemList({
         <Button
           onClick={() => {
             setOpen(false);
-            handleChanged(
-              list.sort((a: NameValue, b: NameValue) =>
-                a.name.localeCompare(b.name)
-              )
-            );
+            onUpdate(list);
           }}
           color="primary"
           variant="outlined"

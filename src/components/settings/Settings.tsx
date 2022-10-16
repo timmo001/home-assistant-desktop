@@ -1,5 +1,6 @@
-import { ReactElement, useCallback, useEffect, useMemo, useState } from "react";
+import { ReactElement, useCallback, useEffect } from "react";
 import { CircularProgress, Grid, useTheme } from "@mui/material";
+import { ipcRenderer } from "electron";
 
 import { SettingsSection, SettingsValue } from "../../types/settings";
 import { settingsMap, settingsSections } from "@/assets/settings";
@@ -11,22 +12,24 @@ let initialized = false;
 function Settings(): ReactElement {
   const [settings, setSettings] = useSettings();
 
-  const handleSetup = useCallback(() => {
+  const handleSetup = useCallback(async () => {
     console.log("Setup");
-    // window.electron.ipcRenderer.send("SETTINGS_GET");
-    setSettings({
-      autostart: false,
-      log_level: "INFO",
-      home_assistant_secure: false,
-      home_assistant_host: "homeassistant.local",
-      home_assistant_port: 8123,
-      home_assistant_token: "",
-      home_assistant_subscribed_entites: [],
+    const response = await ipcRenderer.invoke("SETTINGS", {
+      type: "GET",
+      keys: Object.keys(settingsMap),
     });
+    console.log("Setup response", response);
+    setSettings(response);
   }, []);
 
-  const handleChanged = useCallback(
-    (key: string, value: SettingsValue) => {
+  const handleUpdate = useCallback(
+    async (key: string, value: SettingsValue) => {
+      console.log("Update:", key, value);
+      await ipcRenderer.invoke("SETTINGS", {
+        type: "SET",
+        key,
+        value,
+      });
       setSettings({ ...settings, [key]: value });
     },
     [settings, setSettings]
@@ -69,7 +72,7 @@ function Settings(): ReactElement {
                           key={index}
                           keyIn={key}
                           valueIn={settings[key]}
-                          onChanged={handleChanged}
+                          onUpdate={handleUpdate}
                         />
                       ))}
                   </>
