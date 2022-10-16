@@ -14,7 +14,7 @@ process.env.PUBLIC = app.isPackaged
   ? process.env.DIST
   : join(process.env.DIST_ELECTRON, "../public");
 
-import { app, BrowserWindow, shell, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, Menu, shell, Tray } from "electron";
 import { release } from "os";
 import { join } from "path";
 import settings from "electron-settings";
@@ -30,16 +30,45 @@ if (!app.requestSingleInstanceLock()) {
   process.exit(0);
 }
 
-let win: BrowserWindow | null = null;
+let win: BrowserWindow | null = null,
+  tray: Tray = null;
 // Here, you can also use other preload
 const preload = join(__dirname, "../preload/index.js");
 const url = process.env.VITE_DEV_SERVER_URL;
 const indexHtml = join(process.env.DIST, "index.html");
 
-async function createWindow() {
+async function createTray(): Promise<void> {
+  // const path = join(process.env.PUBLIC, "logo.svg");
+  const path = join(__dirname, "../assets/logo.svg");
+  // const image = nativeImage.createFromPath(path);
+  console.log("Logo Path:", path);
+  tray = new Tray(path);
+  tray.setToolTip("Home Assistant Desktop");
+  tray.setContextMenu(
+    Menu.buildFromTemplate([
+      {
+        type: "normal",
+        label: "Settings",
+        click: async () => {
+          await createSettingsWindow();
+        },
+      },
+      { type: "separator" },
+      {
+        type: "normal",
+        label: "Exit",
+        click: () => {
+          app.quit();
+        },
+      },
+    ])
+  );
+}
+
+async function createSettingsWindow(): Promise<void> {
   win = new BrowserWindow({
-    title: "Main window",
-    icon: join(process.env.PUBLIC, "favicon.svg"),
+    title: "Settings",
+    icon: join(process.env.PUBLIC, "logo.ico"),
     webPreferences: {
       preload,
       contextIsolation: false,
@@ -53,7 +82,7 @@ async function createWindow() {
     win.loadFile(indexHtml);
   } else {
     win.loadURL(url);
-    // win.webContents.openDevTools()
+    win.webContents.openDevTools();
   }
 
   // Test actively push message to the Electron-Renderer
@@ -68,12 +97,12 @@ async function createWindow() {
   });
 }
 
-app.whenReady().then(createWindow);
+app.whenReady().then(createTray);
 
-app.on("window-all-closed", () => {
-  win = null;
-  if (process.platform !== "darwin") app.quit();
-});
+// app.on("window-all-closed", () => {
+//   win = null;
+//   if (process.platform !== "darwin") app.quit();
+// });
 
 app.on("second-instance", () => {
   if (win) {
@@ -88,7 +117,7 @@ app.on("activate", () => {
   if (allWindows.length) {
     allWindows[0].focus();
   } else {
-    createWindow();
+    createSettingsWindow();
   }
 });
 
@@ -104,7 +133,7 @@ ipcMain.handle("open-win", (_event, arg) => {
     childWindow.loadFile(indexHtml, { hash: arg });
   } else {
     childWindow.loadURL(`${url}/#${arg}`);
-    // childWindow.webContents.openDevTools({ mode: "undocked", activate: true })
+    childWindow.webContents.openDevTools({ mode: "undocked", activate: true });
   }
 });
 

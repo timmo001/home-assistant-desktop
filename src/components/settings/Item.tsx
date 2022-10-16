@@ -204,10 +204,10 @@ function Item({ keyIn, valueIn, onUpdate }: ItemProps): ReactElement {
         <>
           <ItemList
             setting={settingsMap[keyIn]}
-            listIn={value as unknown as Array<NameValue>}
+            listIn={value as unknown as Array<string>}
             open={open}
             setOpen={setOpen}
-            onUpdate={(newValue: Array<NameValue>) => {
+            onUpdate={(newValue: Array<string>) => {
               setValue(newValue);
               onUpdate(keyIn, newValue);
             }}
