@@ -4,6 +4,8 @@ import {
   mdiWeb,
   mdiProtocol,
   mdiHomeAssistant,
+  mdiSecurity,
+  mdiFormTextboxPassword,
 } from "@mdi/js";
 
 import { SettingDescription, SettingsSection } from "@/types/settings";
@@ -36,23 +38,36 @@ export const settingsMap: { [key: string]: SettingDescription } = {
     description: "Log level for the application",
     icon: mdiTextBoxOutline,
   },
+  home_assistant_secure: {
+    section: "homeAssistant",
+    name: "SSL",
+    description: "Use SSL to connect to Home Assistant",
+    icon: mdiSecurity,
+  },
   home_assistant_host: {
     section: "homeAssistant",
     name: "Host",
-    description: "Port for the API and WebSocket",
+    description: "The host of the Home Assistant instance",
     icon: mdiWeb,
   },
   home_assistant_port: {
     section: "homeAssistant",
     name: "Port",
-    description: "Port for the API and WebSocket",
+    description: "The port of the Home Assistant instance",
     icon: mdiProtocol,
     minimum: 1,
   },
-  // additional_media_directories: {
-  //   name: "Additional Media Directories",
-  //   description: "Additional media directories for the media endpoint",
-  //   icon: mdiFolderMultipleOutline,
-  //   isList: true,
-  // },
+  home_assistant_token: {
+    section: "homeAssistant",
+    name: "Token",
+    description: "The long-lived access token for Home Assistant",
+    icon: mdiFormTextboxPassword,
+  },
+  home_assistant_subscribed_entites: {
+    section: "homeAssistant",
+    name: "Subscribed Entities",
+    description: "The entities to subscribe to",
+    icon: mdiHomeAssistant,
+    isList: true,
+  },
 };

@@ -22,6 +22,7 @@ export type SettingsValue =
   | null
   | boolean
   | string
+  | string[]
   | number
   | SettingsObject
   | SettingsValue[]

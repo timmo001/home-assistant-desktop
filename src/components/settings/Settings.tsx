@@ -1,12 +1,7 @@
 import { ReactElement, useCallback, useEffect, useMemo, useState } from "react";
 import { CircularProgress, Grid, useTheme } from "@mui/material";
 
-import {
-  SettingDescription,
-  SettingsObject,
-  SettingsSection,
-  SettingsValue,
-} from "../../types/settings";
+import { SettingsSection, SettingsValue } from "../../types/settings";
 import { settingsMap, settingsSections } from "@/assets/settings";
 import { useSettings } from "../Contexts/Settings";
 import Item from "./Item";
@@ -22,8 +17,11 @@ function Settings(): ReactElement {
     setSettings({
       autostart: false,
       log_level: "INFO",
+      home_assistant_secure: false,
       home_assistant_host: "homeassistant.local",
       home_assistant_port: 8123,
+      home_assistant_token: "",
+      home_assistant_subscribed_entites: [],
     });
   }, []);
 
