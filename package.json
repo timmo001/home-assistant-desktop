@@ -8,7 +8,7 @@
     "name": "Timmo",
     "url": "https://timmo.dev"
   },
-  "description": "Vite React Electron boilerplate.",
+  "description": "A desktop application for interacting with Home Assistant.",
   "repository": {
     "type": "git",
     "url": "https://github.com/timmo001/home-assistant-desktop"
@@ -22,7 +22,9 @@
   "engines": {
     "node": "^14.18.0 || >=16.0.0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "electron-settings": "4.0.2"
+  },
   "devDependencies": {
     "@emotion/react": "11.10.4",
     "@emotion/styled": "11.10.4",
@@ -36,7 +38,6 @@
     "@vitejs/plugin-react": "2.1.0",
     "electron": "21.1.1",
     "electron-builder": "23.6.0",
-    "electron-settings": "4.0.2",
     "lodash": "4.17.21",
     "react": "18.2.0",
     "react-dom": "18.2.0",
