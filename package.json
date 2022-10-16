@@ -1,0 +1,49 @@
+{
+  "name": "home-assistant-desktop",
+  "productName": "Home Assistant Desktop",
+  "private": true,
+  "version": "1.0.0",
+  "author": {
+    "email": "contact@timmo.xyz",
+    "name": "Timmo",
+    "url": "https://timmo.dev"
+  },
+  "description": "Vite React Electron boilerplate.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/timmo001/home-assistant-desktop"
+  },
+  "license": "MIT",
+  "main": "dist-electron/electron/main/index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build && electron-builder"
+  },
+  "engines": {
+    "node": "^14.18.0 || >=16.0.0"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@emotion/react": "11.10.4",
+    "@emotion/styled": "11.10.4",
+    "@fontsource/roboto": "4.5.8",
+    "@mdi/js": "7.0.96",
+    "@mdi/react": "1.6.1",
+    "@mui/material": "5.10.9",
+    "@types/react": "18.0.21",
+    "@types/react-dom": "18.0.6",
+    "@vitejs/plugin-react": "2.1.0",
+    "electron": "21.1.1",
+    "electron-builder": "23.6.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "typescript": "4.8.4",
+    "vite": "3.1.8",
+    "vite-electron-plugin": "0.4.6"
+  },
+  "debug": {
+    "env": {
+      "VITE_DEV_SERVER_URL": "http://127.0.0.1:7777"
+    }
+  }
+}
