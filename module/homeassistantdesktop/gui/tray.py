@@ -61,7 +61,7 @@ class GUITray(Base, QtWidgets.QSystemTrayIcon):
         reason: int,
     ) -> None:
         """Handle the activated signal"""
-        if reason == QtWidgets.QSystemTrayIcon.Trigger:
+        if reason == QtWidgets.QSystemTrayIcon.Trigger:  # type: ignore
             self.contextMenu().popup(QtGui.QCursor.pos())
 
     @QtCore.Slot()
