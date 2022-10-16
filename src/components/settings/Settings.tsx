@@ -2,7 +2,7 @@ import { ReactElement, useCallback, useEffect } from "react";
 import { CircularProgress, Grid, useTheme } from "@mui/material";
 import { ipcRenderer } from "electron";
 
-import { SettingsSection, SettingsValue } from "../../types/settings";
+import type { SettingsSection, SettingsValue } from "@/types/settings";
 import { settingsMap, settingsSections } from "@/assets/settings";
 import { useSettings } from "../Contexts/Settings";
 import Item from "./Item";

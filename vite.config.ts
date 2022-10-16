@@ -50,6 +50,7 @@ export default defineConfig({
       })()
     : undefined,
   clearScreen: false,
+  publicDir: "public",
 });
 
 function debounce<Fn extends (...args: any[]) => void>(fn: Fn, delay = 299) {

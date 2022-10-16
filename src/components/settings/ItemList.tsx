@@ -21,8 +21,7 @@ import { Icon } from "@mdi/react";
 import { mdiMinusBoxOutline, mdiPlus } from "@mdi/js";
 import _ from "lodash";
 
-import { NameValue } from "@/types/nameValue";
-import { SettingDescription } from "@/types/settings";
+import type { SettingDescription } from "@/types/settings";
 
 interface ItemListProps {
   setting: SettingDescription;

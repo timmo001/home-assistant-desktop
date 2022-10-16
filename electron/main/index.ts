@@ -38,8 +38,8 @@ const url = process.env.VITE_DEV_SERVER_URL;
 const indexHtml = join(process.env.DIST, "index.html");
 
 async function createTray(): Promise<void> {
-  // const path = join(process.env.PUBLIC, "favicon.on.on.svg");
-  const path = join(__dirname, "../assets/favicon.svg");
+  const path = join(process.env.PUBLIC, "favicon.svg");
+  // const path = join(__dirname, "../assets/favicon.svg");
   // const image = nativeImage.createFromPath(path);
   console.log("Logo Path:", path);
   tray = new Tray(path);

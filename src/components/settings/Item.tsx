@@ -18,8 +18,7 @@ import {
 import { Icon } from "@mdi/react";
 import { mdiContentSaveOutline, mdiEye, mdiEyeOff } from "@mdi/js";
 
-import { NameValue } from "@/types/nameValue";
-import { SettingDescription, SettingsValue } from "@/types/settings";
+import type { SettingDescription, SettingsValue } from "@/types/settings";
 import { settingsMap } from "@/assets/settings";
 import ItemList from "./ItemList";
 

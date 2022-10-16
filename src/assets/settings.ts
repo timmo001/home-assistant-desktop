@@ -8,7 +8,7 @@ import {
   mdiFormTextboxPassword,
 } from "@mdi/js";
 
-import { SettingDescription, SettingsSection } from "@/types/settings";
+import type { SettingDescription, SettingsSection } from "@/types/settings";
 
 export const settingsSections: SettingsSection[] = [
   {
