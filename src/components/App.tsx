@@ -12,6 +12,7 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 
+import { SettingsProvider } from "./Contexts/Settings";
 import Routes from "./Routes";
 
 const App: React.FC = () => {
@@ -34,7 +35,9 @@ const App: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Routes />
+      <SettingsProvider>
+        <Routes />
+      </SettingsProvider>
     </ThemeProvider>
   );
 };
