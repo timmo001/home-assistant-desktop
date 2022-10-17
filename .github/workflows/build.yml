@@ -37,8 +37,16 @@ jobs:
           node-version: 16.x
           cache: yarn
           cache-dependency-path: yarn.lock
-      - name: 🏗️ Build / Release Electron app
-        uses: samuelmeuli/action-electron-builder@v1
+      - name: 🏗 Install dependencies
+        run: |
+          yarn install
+      - name: 🏗️ Build / Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          yarn build
+      - name: ⬆ Upload Artifacts
+        uses: actions/upload-artifact@v3
         with:
-          github_token: ${{ secrets.github_token }}
-          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
+          name: release-${{ matrix.os }}
+          path: release
