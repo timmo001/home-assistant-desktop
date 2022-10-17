@@ -23,7 +23,7 @@ import { ipcRenderer } from "electron";
 import _ from "lodash";
 
 import type { SettingDescription } from "@/types/settings";
-import HomeAssistantEntities from "./HomeAssistantEntities";
+import HomeAssistantEntities from "@/components/settings/HomeAssistantEntities";
 
 interface ItemListProps {
   setting: SettingDescription;

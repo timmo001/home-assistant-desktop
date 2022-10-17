@@ -20,7 +20,7 @@ import { mdiContentSaveOutline, mdiEye, mdiEyeOff } from "@mdi/js";
 
 import type { SettingDescription, SettingsValue } from "@/types/settings";
 import { settingsMap } from "@/assets/settings";
-import ItemList from "./ItemList";
+import ItemList from "@/components/settings/ItemList";
 
 interface ItemProps {
   keyIn: string;

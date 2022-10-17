@@ -1,4 +1,4 @@
-import { NameValue } from "./nameValue";
+import { NameValue } from "@/types/nameValue";
 
 export interface SettingsSection {
   id: string;

@@ -4,9 +4,9 @@ import { ipcRenderer } from "electron";
 
 import type { SettingsSection, SettingsValue } from "@/types/settings";
 import { settingsMap, settingsSections } from "@/assets/settings";
-import { useSettings } from "../contexts/Settings";
-import Item from "./Item";
-import Section from "./Section";
+import { useSettings } from "@/components/contexts/Settings";
+import Item from "@/components/settings/Item";
+import Section from "@/components/settings/Section";
 
 let initialized = false;
 function Settings(): ReactElement {

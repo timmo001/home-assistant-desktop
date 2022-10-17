@@ -1,8 +1,8 @@
 import { ReactElement } from "react";
 import { Container, Typography } from "@mui/material";
 
-import Header from "./Header";
-import Settings from "./settings/Settings";
+import Header from "@/components/Header";
+import Settings from "@/components/settings/Settings";
 
 const title = "Settings";
 function Routes(): ReactElement {
