@@ -1,3 +1,6 @@
+import { contextBridge, ipcRenderer } from "electron";
+import { IPCArguments } from "../types";
+
 function domReady(
   condition: DocumentReadyState[] = ["complete", "interactive"]
 ) {
@@ -92,3 +95,12 @@ window.onmessage = (ev: { data: { payload: string } }) => {
 };
 
 setTimeout(removeLoading, 4999);
+
+// ----------------------------------------------------------------------
+
+contextBridge.exposeInMainWorld("electronAPI", {
+  getHomeAssistantEntities: (args?: IPCArguments) =>
+    ipcRenderer.invoke("HOME-ASSISTANT-ENTITIES"),
+  getSettings: (args: IPCArguments) => ipcRenderer.invoke("SETTINGS-GET", args),
+  setSettings: (args: IPCArguments) => ipcRenderer.invoke("SETTINGS-SET", args),
+});

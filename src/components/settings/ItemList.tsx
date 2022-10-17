@@ -19,7 +19,6 @@ import {
 import { Icon } from "@mdi/react";
 import { mdiMinusBoxOutline, mdiPlus } from "@mdi/js";
 import { HassEntities } from "home-assistant-js-websocket";
-import { ipcRenderer } from "electron";
 import _ from "lodash";
 
 import type { SettingDescription } from "@/types/settings";
@@ -52,9 +51,7 @@ function ItemList({
     initialized = true;
     (async () => {
       setHomeAssistantEntities(
-        await ipcRenderer.invoke("HOME_ASSISTANT_ENTITIES", {
-          type: "GET",
-        })
+        await window.electronAPI.getHomeAssistantEntities()
       );
     })();
   }, []);

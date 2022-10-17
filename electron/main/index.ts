@@ -40,6 +40,7 @@ import {
 } from "home-assistant-js-websocket";
 import open from "open";
 import settings from "electron-settings";
+import { IPCArguments } from "../types";
 
 globalThis.WebSocket = require("ws");
 
@@ -84,7 +85,7 @@ async function createSettingsWindow(): Promise<void> {
     ),
     webPreferences: {
       preload,
-      contextIsolation: false,
+      contextIsolation: true,
       nodeIntegration: true,
     },
     autoHideMenuBar: true,
@@ -185,30 +186,23 @@ async function setSetting(key: string, value: any): Promise<void> {
   }
 }
 
-ipcMain.handle(
-  "SETTINGS",
-  async (
-    _event,
-    args: { type: string; key?: string; keys?: string[]; value: any }
-  ) => {
-    console.log("SETTINGS:", args);
-    switch (args.type) {
-      case "GET":
-        if (args.key) return await getSetting(args.key);
-        if (args.keys) {
-          let result = {};
-          for (const key of args.keys) {
-            result[key] = (await getSetting(key)) || defaultSettings[key];
-          }
-          return result;
-        } else return await getSettings(Object.keys(defaultSettings));
-      case "SET":
-        if (args.key) return await setSetting(args.key, args.value);
-      default:
-        return null;
+ipcMain.handle("SETTINGS-GET", async (_event, args: IPCArguments) => {
+  console.log("SETTINGS-GET:", args);
+  if (args.key) return await getSetting(args.key);
+  if (args.keys) {
+    let result = {};
+    for (const key of args.keys) {
+      result[key] = (await getSetting(key)) || defaultSettings[key];
     }
+    return result;
   }
-);
+  return await getSettings(Object.keys(defaultSettings));
+});
+
+ipcMain.handle("SETTINGS-SET", async (_event, args: IPCArguments) => {
+  console.log("SETTINGS-SET:", args);
+  if (args.key) return await setSetting(args.key, args.value);
+});
 
 // ----------------------------------------
 // Home Assistant
@@ -312,25 +306,17 @@ async function setupHomeAssistant(): Promise<void> {
 setupHomeAssistant();
 
 ipcMain.handle(
-  "HOME_ASSISTANT_ENTITIES",
-  async (
-    _event,
-    args: { type: string; key?: string; keys?: string[]; value: any }
-  ) => {
-    console.log("HOME_ASSISTANT_ENTITIES:", args);
-    switch (args.type) {
-      case "GET":
-        if (args.key) return homeAssistantEntities[args.key];
-        if (args.keys) {
-          let result = {};
-          for (const key of args.keys) {
-            result[key] = homeAssistantEntities[key];
-          }
-          return result;
-        } else return homeAssistantEntities;
-      default:
-        return null;
-    }
+  "HOME-ASSISTANT-ENTITIES",
+  async (_event, args?: IPCArguments) => {
+    console.log("HOME-ASSISTANT-ENTITIES:", args);
+    if (args?.key) return homeAssistantEntities[args.key];
+    if (args?.keys) {
+      let result = {};
+      for (const key of args.keys) {
+        result[key] = homeAssistantEntities[key];
+      }
+      return result;
+    } else return homeAssistantEntities;
   }
 );
 

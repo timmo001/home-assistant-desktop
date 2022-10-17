@@ -4,7 +4,6 @@ import { rmSync } from "fs";
 import react from "@vitejs/plugin-react";
 import electron from "vite-electron-plugin";
 import path from "path";
-import renderer from "vite-plugin-electron-renderer";
 
 import pkg from "./package.json";
 
@@ -38,7 +37,6 @@ export default defineConfig({
           ]
         : undefined,
     }),
-    renderer(),
   ],
   server: process.env.VSCODE_DEBUG
     ? (() => {

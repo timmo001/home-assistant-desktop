@@ -1,6 +1,5 @@
 import { ReactElement, useCallback, useEffect } from "react";
 import { CircularProgress, Grid, useTheme } from "@mui/material";
-import { ipcRenderer } from "electron";
 
 import type { SettingsSection, SettingsValue } from "@/types/settings";
 import { settingsMap, settingsSections } from "@/assets/settings";
@@ -14,8 +13,7 @@ function Settings(): ReactElement {
 
   const handleSetup = useCallback(async () => {
     console.log("Setup");
-    const response = await ipcRenderer.invoke("SETTINGS", {
-      type: "GET",
+    const response = await window.electronAPI.getSettings({
       keys: Object.keys(settingsMap),
     });
     console.log("Setup response", response);
@@ -25,8 +23,7 @@ function Settings(): ReactElement {
   const handleUpdate = useCallback(
     async (key: string, value: SettingsValue) => {
       console.log("Update:", key, value);
-      await ipcRenderer.invoke("SETTINGS", {
-        type: "SET",
+      await window.electronAPI.setSettings({
         key,
         value,
       });
