@@ -19,4 +19,26 @@ concurrency:
 
 jobs:
   build-app:
-    uses: timmo001/workflows/.github/workflows/build-node-linux.yml@master
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - macos-latest
+          - ubuntu-latest
+          - windows-latest
+    steps:
+      - name: ⤵️ Check out code from GitHub
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+      - name: 🏗 Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: yarn
+          cache-dependency-path: ${{ inputs.code-path }}/**/yarn.lock
+      - name: 🏗️ Build / Release Electron app
+        uses: samuelmeuli/action-electron-builder@v1
+        with:
+          github_token: ${{ secrets.github_token }}
+          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
