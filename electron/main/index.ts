@@ -89,6 +89,7 @@ async function createSettingsWindow(): Promise<void> {
     },
     width: 1920,
     height: 1080,
+    frame: false,
   });
 
   if (app.isPackaged) {
