@@ -26,6 +26,7 @@ jobs:
           - macos-latest
           - ubuntu-latest
           - windows-latest
+      fail-fast: false
     steps:
       - name: ⤵️ Check out code from GitHub
         uses: actions/checkout@v3
