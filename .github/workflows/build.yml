@@ -40,11 +40,27 @@ jobs:
           node-version: 16.x
           cache: yarn
           cache-dependency-path: yarn.lock
+      - name: 📂 Cache Electron
+        uses: actions/cache@v1
+        with:
+          path: ${{ github.workspace }}/.cache/electron
+          key: ${{ runner.os }}-electron-cache-${{ hashFiles(format('{0}{1}', github.workspace, '/yarn.lock')) }}
+          restore-keys: |
+            ${{ runner.os }}-electron-cache-
+      - name: 📂 Cache Electron-Builder
+        uses: actions/cache@v1
+        with:
+          path: ${{ github.workspace }}/.cache/electron-builder
+          key: ${{ runner.os }}-electron-builder-cache-${{ hashFiles(format('{0}{1}', github.workspace, '/yarn.lock')) }}
+          restore-keys: |
+            ${{ runner.os }}-electron-builder-cache-
       - name: 🏗 Install dependencies
         run: |
           yarn install
       - name: 🏗️ Build / Release
         env:
+          ELECTRON_BUILDER_CACHE: ${{ github.workspace }}/.cache/electron-builder
+          ELECTRON_CACHE: ${{ github.workspace }}/.cache/electron
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           yarn build
