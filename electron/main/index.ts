@@ -343,7 +343,7 @@ function updateMenu(): void {
   for (const entity of Object.values(homeAssistantSubscribedEntites)) {
     const domain = entity.entity_id.split(".")[0];
     let serviceNames: Array<string> = [];
-    if (homeAssistantServices[domain])
+    if (domain in homeAssistantServices)
       serviceNames = Object.keys(homeAssistantServices[domain]);
 
     menuItemsEntities.push({
