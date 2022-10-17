@@ -20,7 +20,7 @@
   },
   linux: {
     icon: "electron/resources/iconset",
-    target: ["AppImage", "deb", "flatpak"],
+    target: ["AppImage", "deb"],
     artifactName: "${productName}-Linux-${version}.${ext}",
     icon: "public/logo.png",
   },
