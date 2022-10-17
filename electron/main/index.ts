@@ -37,6 +37,7 @@ import {
   subscribeEntities,
   subscribeServices,
 } from "home-assistant-js-websocket";
+import open from "open";
 import settings from "electron-settings";
 
 globalThis.WebSocket = require("ws");
@@ -232,6 +233,22 @@ async function connectToHomeAssistant(): Promise<Connection> {
   return connection;
 }
 
+async function openInHomeAssistant(entityId?: string): Promise<void> {
+  const { homeAssistantHost, homeAssistantPort, homeAssistantSecure } =
+    await getSettings([
+      "homeAssistantHost",
+      "homeAssistantPort",
+      "homeAssistantSecure",
+    ]);
+  const hassUrl = `http${
+    homeAssistantSecure ? "s" : ""
+  }://${homeAssistantHost}:${homeAssistantPort}`;
+
+  const url = `${hassUrl}/history?entity_id=${entityId}`;
+  console.log("Open in Home Assistant:", url);
+  open(url);
+}
+
 function setHomeAssistantConfig(config: HassConfig): void {
   homeAssistantConfig = config;
   console.log("Home Assistant Config Updated");
@@ -294,13 +311,18 @@ function updateMenu(): void {
           ? ` ${entity.attributes.unit_of_measurement}`
           : ""
       }`,
+      click: async () => {
+        await openInHomeAssistant(entity.entity_id);
+      },
     });
   }
+
+  if (menuItemsEntities.length > 0)
+    menuItemsEntities.push({ type: "separator" });
 
   tray.setContextMenu(
     Menu.buildFromTemplate([
       ...menuItemsEntities,
-      { type: "separator" },
       {
         type: "normal",
         label: "Settings",
