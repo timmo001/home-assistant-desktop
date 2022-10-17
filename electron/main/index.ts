@@ -14,10 +14,32 @@ process.env.PUBLIC = app.isPackaged
   ? process.env.DIST
   : join(process.env.DIST_ELECTRON, "../../public");
 
-import { app, BrowserWindow, ipcMain, Menu, shell, Tray } from "electron";
+import {
+  app,
+  BrowserWindow,
+  ipcMain,
+  Menu,
+  MenuItemConstructorOptions,
+  shell,
+  Tray,
+} from "electron";
 import { release } from "os";
 import { join } from "path";
+import {
+  Auth,
+  Connection,
+  createConnection,
+  createLongLivedTokenAuth,
+  HassConfig,
+  HassEntities,
+  HassServices,
+  subscribeConfig,
+  subscribeEntities,
+  subscribeServices,
+} from "home-assistant-js-websocket";
 import settings from "electron-settings";
+
+globalThis.WebSocket = require("ws");
 
 // Disable GPU Acceleration for Windows 7
 if (release().startsWith("6.1")) app.disableHardwareAcceleration();
@@ -45,28 +67,10 @@ async function createTray(): Promise<void> {
   console.log("Logo Path:", path);
   tray = new Tray(path);
   tray.setToolTip("Home Assistant Desktop");
-  tray.setContextMenu(
-    Menu.buildFromTemplate([
-      {
-        type: "normal",
-        label: "Settings",
-        click: async () => {
-          await createSettingsWindow();
-        },
-      },
-      { type: "separator" },
-      {
-        type: "normal",
-        label: "Exit",
-        click: () => {
-          app.quit();
-        },
-      },
-    ])
-  );
   tray.on("click", () => {
     tray.popUpContextMenu();
   });
+  updateMenu();
 }
 
 async function createSettingsWindow(): Promise<void> {
@@ -128,7 +132,6 @@ app.on("activate", () => {
   }
 });
 
-// new window example arg: new windows url
 ipcMain.handle("open-win", (_event, arg) => {
   const childWindow = new BrowserWindow({
     webPreferences: {
@@ -157,6 +160,22 @@ const defaultSettings = {
   homeAssistantSubscribedEntites: [],
 };
 
+async function getSetting(key: string): Promise<any> {
+  return (await settings.get(key)) || defaultSettings[key];
+}
+
+async function getSettings(keys: Array<string>): Promise<any> {
+  let result = {};
+  for (const key of keys) {
+    result[key] = (await getSetting(key)) || defaultSettings[key];
+  }
+  return result;
+}
+
+async function setSetting(key: string, value: any): Promise<void> {
+  await settings.set(key, value);
+}
+
 ipcMain.handle(
   "SETTINGS",
   async (
@@ -166,18 +185,137 @@ ipcMain.handle(
     console.log("SETTINGS:", args);
     switch (args.type) {
       case "GET":
-        if (args.key) return await settings.get(args.key);
+        if (args.key) return await getSetting(args.key);
         if (args.keys) {
           let result = {};
           for (const key of args.keys) {
-            result[key] = (await settings.get(key)) || defaultSettings[key];
+            result[key] = (await getSetting(key)) || defaultSettings[key];
           }
           return result;
-        }
+        } else return await getSettings(Object.keys(defaultSettings));
       case "SET":
-        if (args.key) return await settings.set(args.key, args.value);
+        if (args.key) return await setSetting(args.key, args.value);
       default:
         return null;
     }
   }
 );
+
+// ----------------------------------------
+// Home Assistant
+// ----------------------------------------
+let homeAssistantConfig: HassConfig,
+  homeAssistantEntities: HassEntities,
+  homeAssistantServices: HassServices,
+  homeAssistantSubscribedEntites: Partial<HassEntities> = {};
+
+async function connectToHomeAssistant(): Promise<Connection> {
+  console.log("Connecting to Home Assistant...");
+  const {
+    homeAssistantHost,
+    homeAssistantPort,
+    homeAssistantSecure,
+    homeAssistantToken,
+  } = await getSettings([
+    "homeAssistantHost",
+    "homeAssistantPort",
+    "homeAssistantSecure",
+    "homeAssistantToken",
+  ]);
+  const hassUrl = `http${
+    homeAssistantSecure ? "s" : ""
+  }://${homeAssistantHost}:${homeAssistantPort}`;
+  console.log("Home Assistant URL:", hassUrl);
+  const auth: Auth = createLongLivedTokenAuth(hassUrl, homeAssistantToken);
+  const connection: Connection = await createConnection({ auth });
+  console.log("Connected to Home Assistant");
+  return connection;
+}
+
+function setHomeAssistantConfig(config: HassConfig): void {
+  homeAssistantConfig = config;
+  console.log("Home Assistant Config Updated");
+}
+
+async function setHomeAssistantEntities(entities: HassEntities): Promise<void> {
+  homeAssistantEntities = entities;
+  // console.log("Home Assistant Entities Updated");
+  let subscribedEntitiesUpdated: boolean = false;
+  for (const entityId of await getSetting("homeAssistantSubscribedEntites")) {
+    if (
+      !homeAssistantSubscribedEntites[entityId] ||
+      homeAssistantSubscribedEntites[entityId].state !==
+        homeAssistantEntities[entityId].state
+    ) {
+      homeAssistantSubscribedEntites[entityId] =
+        homeAssistantEntities[entityId];
+      subscribedEntitiesUpdated = true;
+    }
+  }
+  if (subscribedEntitiesUpdated) {
+    console.log("Home Assistant Subscribed Entities Updated");
+    updateMenu();
+  }
+}
+
+function setHomeAssistantServices(services: HassServices): void {
+  homeAssistantServices = services;
+  console.log("Home Assistant Services Updated");
+}
+
+async function setupHomeAssistant(): Promise<void> {
+  console.log("Setting up Home Assistant...");
+  // Connect to Home Assistant
+  const connection: Connection = await connectToHomeAssistant();
+
+  // Subscribe to Home Assistant Config
+  subscribeConfig(connection, setHomeAssistantConfig);
+
+  // Subscribe to Home Assistant Services
+  subscribeServices(connection, setHomeAssistantServices);
+
+  // Subscribe to Home Assistant Entities
+  subscribeEntities(connection, setHomeAssistantEntities);
+}
+
+setupHomeAssistant();
+
+// ----------------------------------------
+// Menu
+// ----------------------------------------
+function updateMenu(): void {
+  const menuItemsEntities: Array<MenuItemConstructorOptions> = [];
+
+  for (const entity of Object.values(homeAssistantSubscribedEntites)) {
+    menuItemsEntities.push({
+      type: "normal",
+      label: `${entity.attributes.friendly_name} - ${entity.state}${
+        entity.attributes.unit_of_measurement
+          ? ` ${entity.attributes.unit_of_measurement}`
+          : ""
+      }`,
+    });
+  }
+
+  tray.setContextMenu(
+    Menu.buildFromTemplate([
+      ...menuItemsEntities,
+      { type: "separator" },
+      {
+        type: "normal",
+        label: "Settings",
+        click: async () => {
+          await createSettingsWindow();
+        },
+      },
+      { type: "separator" },
+      {
+        type: "normal",
+        label: "Exit",
+        click: () => {
+          app.quit();
+        },
+      },
+    ])
+  );
+}

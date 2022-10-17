@@ -23,7 +23,9 @@
     "node": "^14.18.0 || >=16.0.0"
   },
   "dependencies": {
-    "electron-settings": "4.0.2"
+    "electron-settings": "4.0.2",
+    "home-assistant-js-websocket": "8.0.0",
+    "ws": "8.9.0"
   },
   "devDependencies": {
     "@emotion/react": "11.10.4",
@@ -35,6 +37,7 @@
     "@types/lodash": "4.14.186",
     "@types/react": "18.0.21",
     "@types/react-dom": "18.0.6",
+    "@types/ws": "8.5.3",
     "@vitejs/plugin-react": "2.1.0",
     "electron": "21.1.1",
     "electron-builder": "23.6.0",
