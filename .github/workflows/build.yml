@@ -26,6 +26,7 @@ jobs:
           - macos-latest
           - ubuntu-latest
           - windows-latest
+      fail-fast: false
     steps:
       - name: ⤵️ Check out code from GitHub
         uses: actions/checkout@v3
@@ -36,7 +37,7 @@ jobs:
         with:
           node-version: 16.x
           cache: yarn
-          cache-dependency-path: ${{ inputs.code-path }}/**/yarn.lock
+          cache-dependency-path: yarn.lock
       - name: 🏗️ Build / Release Electron app
         uses: samuelmeuli/action-electron-builder@v1
         with:
