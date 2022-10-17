@@ -1,6 +1,5 @@
 import {
   mdiRocketLaunch,
-  mdiTextBoxOutline,
   mdiWeb,
   mdiProtocol,
   mdiHomeAssistant,
@@ -32,12 +31,12 @@ export const settingsMap: { [key: string]: SettingDescription } = {
     description: "Automatically start the application on startup",
     icon: mdiRocketLaunch,
   },
-  logLevel: {
-    section: "general",
-    name: "Log Level",
-    description: "Log level for the application",
-    icon: mdiTextBoxOutline,
-  },
+  // logLevel: {
+  //   section: "general",
+  //   name: "Log Level",
+  //   description: "Log level for the application",
+  //   icon: mdiTextBoxOutline,
+  // },
   homeAssistantSecure: {
     section: "homeAssistant",
     name: "SSL",
