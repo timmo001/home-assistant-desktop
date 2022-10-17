@@ -90,8 +90,6 @@ function Item({ keyIn, valueIn, onUpdate }: ItemProps): ReactElement {
     return <ListItem>{children}</ListItem>;
   };
 
-  console.log("Item", keyIn, valueIn, value);
-
   return (
     <>
       <ItemContainer>

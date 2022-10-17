@@ -13,15 +13,17 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  TextField,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
 import { Icon } from "@mdi/react";
 import { mdiMinusBoxOutline, mdiPlus } from "@mdi/js";
+import { HassEntities } from "home-assistant-js-websocket";
+import { ipcRenderer } from "electron";
 import _ from "lodash";
 
 import type { SettingDescription } from "@/types/settings";
+import HomeAssistantEntities from "./HomeAssistantEntities";
 
 interface ItemListProps {
   setting: SettingDescription;
@@ -31,6 +33,7 @@ interface ItemListProps {
   onUpdate: (list: Array<string>) => void;
 }
 
+let initialized = false;
 function ItemList({
   setting,
   listIn,
@@ -39,8 +42,22 @@ function ItemList({
   onUpdate,
 }: ItemListProps): ReactElement {
   const [list, setList] = useState<Array<string>>([]);
+  const [homeAssistantEntities, setHomeAssistantEntities] =
+    useState<HassEntities>({});
 
   const { name, description, icon }: SettingDescription = setting;
+
+  useEffect(() => {
+    if (initialized) return;
+    initialized = true;
+    (async () => {
+      setHomeAssistantEntities(
+        await ipcRenderer.invoke("HOME_ASSISTANT_ENTITIES", {
+          type: "GET",
+        })
+      );
+    })();
+  }, []);
 
   useEffect(() => {
     if (!open && listIn) setList(listIn);
@@ -87,7 +104,7 @@ function ItemList({
                     marginRight: theme.spacing(1),
                   }}
                 >
-                  <TextField
+                  {/* <TextField
                     id="entity"
                     label="Entity"
                     fullWidth
@@ -97,6 +114,16 @@ function ItemList({
                       const newList: Array<string> = _.cloneDeep(list);
                       console.log("Update:", key, event.target.value);
                       newList[key] = event.target.value;
+                      setList(newList);
+                    }}
+                  /> */}
+                  <HomeAssistantEntities
+                    entities={homeAssistantEntities}
+                    entity={item}
+                    onUpdate={(entity: string) => {
+                      const newList: Array<string> = _.cloneDeep(list);
+                      console.log("Update:", key, entity);
+                      newList[key] = entity;
                       setList(newList);
                     }}
                   />

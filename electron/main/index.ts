@@ -175,6 +175,10 @@ async function getSettings(keys: Array<string>): Promise<any> {
 
 async function setSetting(key: string, value: any): Promise<void> {
   await settings.set(key, value);
+  if (key.includes("homeAssistant")) {
+    await setupHomeAssistant();
+    updateMenu();
+  }
 }
 
 ipcMain.handle(
@@ -281,6 +285,11 @@ function setHomeAssistantServices(services: HassServices): void {
 }
 
 async function setupHomeAssistant(): Promise<void> {
+  if (homeAssistantConfig) {
+    console.log("Home Assistant already connected");
+    return;
+  }
+
   console.log("Setting up Home Assistant...");
   // Connect to Home Assistant
   const connection: Connection = await connectToHomeAssistant();
@@ -296,6 +305,29 @@ async function setupHomeAssistant(): Promise<void> {
 }
 
 setupHomeAssistant();
+
+ipcMain.handle(
+  "HOME_ASSISTANT_ENTITIES",
+  async (
+    _event,
+    args: { type: string; key?: string; keys?: string[]; value: any }
+  ) => {
+    console.log("SETTINGS:", args);
+    switch (args.type) {
+      case "GET":
+        if (args.key) return homeAssistantEntities[args.key];
+        if (args.keys) {
+          let result = {};
+          for (const key of args.keys) {
+            result[key] = homeAssistantEntities[key];
+          }
+          return result;
+        } else return homeAssistantEntities;
+      default:
+        return null;
+    }
+  }
+);
 
 // ----------------------------------------
 // Menu
