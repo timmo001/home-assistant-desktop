@@ -2,7 +2,7 @@
  * @see https://www.electron.build/configuration/configuration
  */
 {
-  appId: "HomeAssistantDesktop",
+  appId: "home-assistant-desktop",
   productName: "Home Assistant Desktop",
   copyright: "Copyright © 2022 ${author}",
   asar: true,
