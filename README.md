@@ -5,7 +5,7 @@
 [![Deploy](https://github.com/timmo001/home-assistant-desktop/actions/workflows/deploy.yml/badge.svg)](https://github.com/timmo001/home-assistant-desktop/actions/workflows/deploy.yml)
 [![Lint](https://github.com/timmo001/home-assistant-desktop/actions/workflows/lint.yml/badge.svg)](https://github.com/timmo001/home-assistant-desktop/actions/workflows/lint.yml)
 
-A Python application to interact with Home Assistant.
+An application to interact with Home Assistant.
 
 ## Support my work
 

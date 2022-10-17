@@ -18,17 +18,5 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-module:
-    uses: timmo001/workflows/.github/workflows/build-python-linux.yml@master
-    with:
-      code-path: module
-  build-container-amd64:
-    uses: timmo001/workflows/.github/workflows/build-container-linux.yml@master
-    with:
-      architecture: amd64
-      container-slug: home-assistant-desktop
-  build-container-aarch64:
-    uses: timmo001/workflows/.github/workflows/build-container-linux.yml@master
-    with:
-      architecture: aarch64
-      container-slug: home-assistant-desktop
+  build-app:
+    uses: timmo001/workflows/.github/workflows/build-node-linux.yml@master

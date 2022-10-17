@@ -2,12 +2,25 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "start .debug.script.mjs",
       "type": "shell",
-      "label": "Module: pip install",
-      "command": "pip install .",
-      "dependsOn": [],
-      "options": {
-        "cwd": "module"
+      "command": "node .vscode/.debug.script.mjs",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "typescript",
+        "fileLocation": "relative",
+        "pattern": {
+          "regexp": "^([a-zA-Z]\\:/?([\\w\\-]/?)+\\.\\w+):(\\d+):(\\d+): (ERROR|WARNING)\\: (.*)$",
+          "file": 1,
+          "line": 3,
+          "column": 4,
+          "code": 5,
+          "message": 6
+        },
+        "background": {
+          "activeOnStart": true,
+          "endsPattern": "^.*[startup] Electron App.*$"
+        }
       }
     }
   ]
