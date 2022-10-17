@@ -40,7 +40,8 @@ import {
 } from "home-assistant-js-websocket";
 import open from "open";
 import settings from "electron-settings";
-import { IPCArguments } from "../types";
+
+import type { IPCArguments } from "../types/ipcArguments";
 
 globalThis.WebSocket = require("ws");
 
@@ -155,7 +156,7 @@ ipcMain.handle("open-win", (_event, arg) => {
 // Settings
 // ----------------------------------------
 const defaultSettings = {
-  autostart: false,
+  autoStart: false,
   logLevel: "INFO",
   homeAssistantSecure: false,
   homeAssistantHost: "homeassistant.local",
@@ -179,7 +180,12 @@ async function getSettings(keys: Array<string>): Promise<any> {
 async function setSetting(key: string, value: any): Promise<void> {
   await settings.set(key, value);
   if (key.includes("homeAssistant")) {
-    if (key === "homeAssistantSubscribedEntites")
+    if (key === "autoStart" && app.isPackaged) {
+      app.setLoginItemSettings({
+        openAtLogin: value === true,
+      });
+      console.log("AutoStart:", value === true);
+    } else if (key === "homeAssistantSubscribedEntites")
       homeAssistantSubscribedEntites = {};
     await setupHomeAssistant();
     updateMenu();
@@ -288,8 +294,8 @@ async function setupHomeAssistant(): Promise<void> {
     console.log("Home Assistant already connected");
     return;
   }
-
   console.log("Setting up Home Assistant...");
+
   // Connect to Home Assistant
   homeAssistantConnection = await connectToHomeAssistant();
 

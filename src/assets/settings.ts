@@ -25,7 +25,7 @@ export const settingsSections: SettingsSection[] = [
 ];
 
 export const settingsMap: { [key: string]: SettingDescription } = {
-  autostart: {
+  autoStart: {
     section: "general",
     name: "Autostart",
     description: "Automatically start the application on startup",
