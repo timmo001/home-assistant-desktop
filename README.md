@@ -1,8 +1,7 @@
 # Home Assistant Desktop
 
 [![CodeQL](https://github.com/timmo001/home-assistant-desktop/actions/workflows/codeql.yml/badge.svg)](https://github.com/timmo001/home-assistant-desktop/actions/workflows/codeql.yml)
-[![Build](https://github.com/timmo001/home-assistant-desktop/actions/workflows/build.yml/badge.svg)](https://github.com/timmo001/home-assistant-desktop/actions/workflows/build.yml)
-[![Deploy](https://github.com/timmo001/home-assistant-desktop/actions/workflows/deploy.yml/badge.svg)](https://github.com/timmo001/home-assistant-desktop/actions/workflows/deploy.yml)
+[![Build / Deploy](https://github.com/timmo001/home-assistant-desktop/actions/workflows/build.yml/badge.svg)](https://github.com/timmo001/home-assistant-desktop/actions/workflows/build.yml)
 [![Lint](https://github.com/timmo001/home-assistant-desktop/actions/workflows/lint.yml/badge.svg)](https://github.com/timmo001/home-assistant-desktop/actions/workflows/lint.yml)
 
 An application to interact with Home Assistant.
