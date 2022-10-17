@@ -19,12 +19,15 @@ concurrency:
 
 jobs:
   build-app:
-    runs-on: ${{ matrix.os }}
+    name: Build App - ${{ matrix.os.name }}
+    runs-on: ${{ matrix.os.machine }}
     strategy:
       matrix:
         os:
-          - ubuntu-latest
-          - windows-latest
+          - name: linux
+            machine: ubuntu-latest
+          - name: windows
+            machine: windows-latest
       fail-fast: false
     steps:
       - name: ⤵️ Check out code from GitHub
@@ -48,5 +51,5 @@ jobs:
       - name: ⬆ Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: release-${{ matrix.os }}
+          name: release-${{ matrix.os.name }}
           path: release
