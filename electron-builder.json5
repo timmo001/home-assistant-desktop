@@ -11,7 +11,7 @@
     buildResources: "electron/resources",
   },
   files: ["dist-electron", "dist"],
-  icon: "public/favicon.svg",
+  icon: "public/logo.svg",
   win: {
     target: [
       {
@@ -20,7 +20,7 @@
       },
     ],
     artifactName: "${productName}-Windows-${version}-Setup.${ext}",
-    icon: "public/favicon.ico",
+    icon: "public/logo.ico",
   },
   nsis: {
     oneClick: false,
@@ -36,6 +36,6 @@
     icon: "electron/resources/iconset",
     target: ["AppImage", "deb"],
     artifactName: "${productName}-Linux-${version}.${ext}",
-    icon: "public/favicon.png",
+    icon: "public/logo.png",
   },
 }

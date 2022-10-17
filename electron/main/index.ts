@@ -64,7 +64,7 @@ const indexHtml = join(process.env.DIST, "index.html");
 async function createTray(): Promise<void> {
   const path = join(
     process.env.PUBLIC,
-    `favicon.${process.platform === "win32" ? "ico" : "png"}`
+    `logo-white.${process.platform === "win32" ? "ico" : "png"}`
   );
   console.log("Logo Path:", path);
   tray = new Tray(path);
@@ -80,7 +80,7 @@ async function createSettingsWindow(): Promise<void> {
     title: "Settings",
     icon: join(
       process.env.PUBLIC,
-      `favicon.${process.platform === "win32" ? "ico" : "png"}`
+      `logo-white.${process.platform === "win32" ? "ico" : "png"}`
     ),
     webPreferences: {
       preload,
