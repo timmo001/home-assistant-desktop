@@ -378,6 +378,14 @@ function updateMenu(): void {
       ...menuItemsEntities,
       {
         type: "normal",
+        label: "Open Home Assistant",
+        click: async () => {
+          await openInHomeAssistant();
+        },
+      },
+      { type: "separator" },
+      {
+        type: "normal",
         label: "Settings",
         click: async () => {
           await createSettingsWindow();
