@@ -27,6 +27,7 @@ import { release } from "os";
 import { join } from "path";
 import {
   Auth,
+  callService,
   Connection,
   createConnection,
   createLongLivedTokenAuth,
@@ -176,6 +177,8 @@ async function getSettings(keys: Array<string>): Promise<any> {
 async function setSetting(key: string, value: any): Promise<void> {
   await settings.set(key, value);
   if (key.includes("homeAssistant")) {
+    if (key === "homeAssistantSubscribedEntites")
+      homeAssistantSubscribedEntites = {};
     await setupHomeAssistant();
     updateMenu();
   }
@@ -209,7 +212,8 @@ ipcMain.handle(
 // ----------------------------------------
 // Home Assistant
 // ----------------------------------------
-let homeAssistantConfig: HassConfig,
+let homeAssistantConnection: Connection,
+  homeAssistantConfig: HassConfig,
   homeAssistantEntities: HassEntities,
   homeAssistantServices: HassServices,
   homeAssistantSubscribedEntites: Partial<HassEntities> = {};
@@ -292,16 +296,16 @@ async function setupHomeAssistant(): Promise<void> {
 
   console.log("Setting up Home Assistant...");
   // Connect to Home Assistant
-  const connection: Connection = await connectToHomeAssistant();
+  homeAssistantConnection = await connectToHomeAssistant();
 
   // Subscribe to Home Assistant Config
-  subscribeConfig(connection, setHomeAssistantConfig);
+  subscribeConfig(homeAssistantConnection, setHomeAssistantConfig);
 
   // Subscribe to Home Assistant Services
-  subscribeServices(connection, setHomeAssistantServices);
+  subscribeServices(homeAssistantConnection, setHomeAssistantServices);
 
   // Subscribe to Home Assistant Entities
-  subscribeEntities(connection, setHomeAssistantEntities);
+  subscribeEntities(homeAssistantConnection, setHomeAssistantEntities);
 }
 
 setupHomeAssistant();
@@ -312,7 +316,7 @@ ipcMain.handle(
     _event,
     args: { type: string; key?: string; keys?: string[]; value: any }
   ) => {
-    console.log("SETTINGS:", args);
+    console.log("HOME_ASSISTANT_ENTITIES:", args);
     switch (args.type) {
       case "GET":
         if (args.key) return homeAssistantEntities[args.key];
@@ -336,15 +340,35 @@ function updateMenu(): void {
   const menuItemsEntities: Array<MenuItemConstructorOptions> = [];
 
   for (const entity of Object.values(homeAssistantSubscribedEntites)) {
+    const domain = entity.entity_id.split(".")[0];
+    let serviceNames: Array<string> = [];
+    if (homeAssistantServices[domain])
+      serviceNames = Object.keys(homeAssistantServices[domain]);
+
     menuItemsEntities.push({
-      type: "normal",
-      label: `${entity.attributes.friendly_name} - ${entity.state}${
-        entity.attributes.unit_of_measurement
-          ? ` ${entity.attributes.unit_of_measurement}`
-          : ""
-      }`,
+      type: serviceNames.includes("toggle") ? "checkbox" : "normal",
+      checked: serviceNames.includes("toggle")
+        ? entity.state === "on"
+          ? true
+          : false
+        : undefined,
+      label: serviceNames.includes("toggle")
+        ? entity.attributes.friendly_name
+        : `${entity.attributes.friendly_name} - ${entity.state}${
+            entity.attributes.unit_of_measurement
+              ? ` ${entity.attributes.unit_of_measurement}`
+              : ""
+          }`,
       click: async () => {
-        await openInHomeAssistant(entity.entity_id);
+        if (serviceNames.includes("toggle"))
+          await callService(homeAssistantConnection, domain, "toggle", {
+            entity_id: entity.entity_id,
+          });
+        else if (serviceNames.includes("turn_on"))
+          await callService(homeAssistantConnection, domain, "turn_on", {
+            entity_id: entity.entity_id,
+          });
+        else await openInHomeAssistant(entity.entity_id);
       },
     });
   }
