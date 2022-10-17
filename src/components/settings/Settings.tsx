@@ -4,7 +4,7 @@ import { ipcRenderer } from "electron";
 
 import type { SettingsSection, SettingsValue } from "@/types/settings";
 import { settingsMap, settingsSections } from "@/assets/settings";
-import { useSettings } from "@/components/contexts/Settings";
+import { useSettings } from "@/components/contexts/SettingsProvider";
 import Item from "@/components/settings/Item";
 import Section from "@/components/settings/Section";
 

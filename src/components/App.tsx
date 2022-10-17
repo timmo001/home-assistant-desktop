@@ -12,7 +12,7 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 
-import { SettingsProvider } from "@/components/contexts/Settings";
+import { SettingsProvider } from "@/components/contexts/SettingsProvider";
 import Routes from "@/components/Routes";
 
 const App: React.FC = () => {
