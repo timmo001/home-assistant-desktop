@@ -12,6 +12,22 @@
   },
   files: ["dist-electron", "dist"],
   icon: "public/logo.svg",
+  nsis: {
+    oneClick: false,
+    perMachine: false,
+    allowToChangeInstallationDirectory: true,
+    deleteAppDataOnUninstall: false,
+  },
+  linux: {
+    icon: "electron/resources/iconset",
+    target: ["AppImage", "deb", "flatpak"],
+    artifactName: "${productName}-Linux-${version}.${ext}",
+    icon: "public/logo.png",
+  },
+  mac: {
+    target: ["dmg"],
+    artifactName: "${productName}-Mac-${version}-Installer.${ext}",
+  },
   win: {
     target: [
       {
@@ -21,21 +37,5 @@
     ],
     artifactName: "${productName}-Windows-${version}-Setup.${ext}",
     icon: "public/logo.ico",
-  },
-  nsis: {
-    oneClick: false,
-    perMachine: false,
-    allowToChangeInstallationDirectory: true,
-    deleteAppDataOnUninstall: false,
-  },
-  mac: {
-    target: ["dmg"],
-    artifactName: "${productName}-Mac-${version}-Installer.${ext}",
-  },
-  linux: {
-    icon: "electron/resources/iconset",
-    target: ["AppImage", "deb"],
-    artifactName: "${productName}-Linux-${version}.${ext}",
-    icon: "public/logo.png",
   },
 }
