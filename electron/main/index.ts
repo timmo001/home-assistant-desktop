@@ -71,8 +71,12 @@ async function createTray(): Promise<void> {
   console.log("Logo Path:", path);
   tray = new Tray(path);
   tray.setToolTip("Home Assistant Desktop");
+  tray.setIgnoreDoubleClickEvents(true);
   tray.on("click", () => {
     tray.popUpContextMenu();
+  });
+  tray.on("double-click", async () => {
+    await openInHomeAssistant();
   });
   updateMenu();
 }
@@ -253,7 +257,7 @@ async function openInHomeAssistant(entityId?: string): Promise<void> {
     homeAssistantSecure ? "s" : ""
   }://${homeAssistantHost}:${homeAssistantPort}`;
 
-  const url = `${hassUrl}/history?entity_id=${entityId}`;
+  const url = entityId ? `${hassUrl}/history?entity_id=${entityId}` : hassUrl;
   console.log("Open in Home Assistant:", url);
   open(url);
 }
@@ -372,6 +376,14 @@ function updateMenu(): void {
   tray.setContextMenu(
     Menu.buildFromTemplate([
       ...menuItemsEntities,
+      {
+        type: "normal",
+        label: "Open Home Assistant",
+        click: async () => {
+          await openInHomeAssistant();
+        },
+      },
+      { type: "separator" },
       {
         type: "normal",
         label: "Settings",
