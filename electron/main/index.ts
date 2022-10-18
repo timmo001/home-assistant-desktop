@@ -179,13 +179,13 @@ async function getSettings(keys: Array<string>): Promise<any> {
 
 async function setSetting(key: string, value: any): Promise<void> {
   await settings.set(key, value);
-  if (key.includes("homeAssistant")) {
-    if (key === "autoStart" && app.isPackaged) {
-      app.setLoginItemSettings({
-        openAtLogin: value === true,
-      });
-      console.log("AutoStart:", value === true);
-    } else if (key === "homeAssistantSubscribedEntites")
+  if (key === "autoStart" && app.isPackaged) {
+    app.setLoginItemSettings({
+      openAtLogin: value === true,
+    });
+    console.log("AutoStart:", value === true);
+  } else if (key.includes("homeAssistant")) {
+    if (key === "homeAssistantSubscribedEntites")
       homeAssistantSubscribedEntites = {};
     await setupHomeAssistant();
     updateMenu();
