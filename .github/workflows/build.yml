@@ -11,9 +11,6 @@ on:
       - opened
       - reopened
       - synchronize
-  release:
-    types:
-      - published
   workflow_dispatch:
 
 concurrency:
