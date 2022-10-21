@@ -94,8 +94,8 @@ async function createSettingsWindow(): Promise<void> {
       nodeIntegration: true,
     },
     autoHideMenuBar: true,
-    width: 720,
-    height: 1280,
+    width: 1280,
+    height: 720,
   });
 
   if (app.isPackaged) {
