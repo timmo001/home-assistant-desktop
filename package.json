@@ -35,7 +35,7 @@
     "@fontsource/roboto": "4.5.8",
     "@mdi/js": "7.0.96",
     "@mdi/react": "1.6.1",
-    "@mui/material": "5.10.10",
+    "@mui/material": "5.10.11",
     "@types/lodash": "4.14.186",
     "@types/node": "18.11.5",
     "@types/react": "18.0.21",
