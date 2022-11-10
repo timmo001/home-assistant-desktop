@@ -401,4 +401,13 @@ function updateMenu(): void {
       },
     ])
   );
+
+  const tooltipArray: Array<string> = [];
+  for (const item of menuItemsEntities) {
+    if (item.type === "normal") {
+      tooltipArray.push(item.label);
+    }
+  }
+
+  tray.setToolTip(tooltipArray.join("\n"));
 }
