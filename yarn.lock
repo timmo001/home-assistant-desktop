@@ -2887,19 +2887,13 @@ verror@^1.10.0:
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
 
-vite-electron-plugin@0.7.2:
-  version "0.7.2"
-  resolved "https://registry.yarnpkg.com/vite-electron-plugin/-/vite-electron-plugin-0.7.2.tgz#708e50963f218b576a8e849df8310a72394cf88e"
-  integrity sha512-vcgRWXyfQvUO0WxJEze3Crkk5nK5UEW2ItDaZ6KRczKsnbMVb+Y9sYWgy8Vu+kL+X5e3OZAlFEcARIf7XXEl2A==
+vite-electron-plugin@0.7.3:
+  version "0.7.3"
+  resolved "https://registry.yarnpkg.com/vite-electron-plugin/-/vite-electron-plugin-0.7.3.tgz#bd54fd835a0f0504a0c206954c554bf53d7068e1"
+  integrity sha512-MGZJGuIhd2yu4Ea9zFYF49yJxERgOJCV4MQMpmH1wDx/Zc4gMFOH3mtPi+1eawkOuzexCRuEbDTaAZeY9wgE9A==
   dependencies:
     fast-glob "^3.2.12"
     notbundle "~0.3.3"
-    vite-plugin-utils "~0.3.6"
-
-vite-plugin-utils@~0.3.6:
-  version "0.3.6"
-  resolved "https://registry.yarnpkg.com/vite-plugin-utils/-/vite-plugin-utils-0.3.6.tgz#f28eea11e5286db1b29bad6e31910ffa71ab3fbf"
-  integrity sha512-+tZdnTxrDdjPzrlPUyvm52SvOVRibDEnA9NdzQt85UoqXwLGJp4RAkT9fK11KdLMTdJlb9DxCvHrDfsn/lSKug==
 
 vite@4.0.4:
   version "4.0.4"
